@@ -1,38 +1,17 @@
 -- =====================================================================
--- Athlete Tax Policy Equivalency Analytics -- SQLite schema (v1)
---
--- CONVENTIONS
---   * Rates are decimal fractions (0.0535 = 5.35%), never percent strings.
---   * Money is REAL, in whole dollars (cents allowed).
---   * Dates are ISO text (YYYY-MM-DD). Seasons are the starting year (2026).
---   * Bracket tables store a THRESHOLD (lower_bound) per row; the upper bound
---     is derived by the v_*_brackets views. The first bracket of every
---     schedule MUST start at 0 (a 0% bracket is inserted when a state has a
---     zero-rate band, e.g. Ohio, Delaware, Mississippi). v_check_* views
---     return rows that break this; they must be empty after every load.
---   * verification_status: 'verified' | 'needs_check' | 'stale_2025' | 'provisional'
---   * Surtaxes (MA 4%, CA 1% MHST) live ONLY in state_surtaxes. Do not also
---     load them as bracket rows or they are double-counted.
+-- Athlete Tax Policy Equivalency Analytics -- SQLite schema (v2, Week 4)
+-- v2 changes are marked "-- v2".
 -- =====================================================================
 
 PRAGMA foreign_keys = ON;
-PRAGMA user_version = 1;
+PRAGMA user_version = 2;
 
--- ---------------------------------------------------------------------
--- 1. STATE-LEVEL TAX DATA
--- ---------------------------------------------------------------------
-
--- One row per state + DC. Structural attributes that do not change by year.
 CREATE TABLE state_tax_profile (
     state_code                  TEXT PRIMARY KEY CHECK (length(state_code) = 2),
     state_name                  TEXT NOT NULL UNIQUE,
     income_tax_type             TEXT NOT NULL
         CHECK (income_tax_type IN ('none','flat','graduated','cap_gains_only')),
     taxes_wages                 INTEGER NOT NULL CHECK (taxes_wages IN (0,1)),
-    -- How the state taxes the sourced slice of a NONRESIDENT athlete:
-    --   direct    = run brackets on the in-state income only
-    --   proration = compute tax on ALL income, then multiply by in-state share
-    -- (CA, NY, NJ are proration; everything else defaults to direct.)
     nonresident_rate_method     TEXT NOT NULL DEFAULT 'direct'
         CHECK (nonresident_rate_method IN ('direct','proration')),
     nonresident_method_status   TEXT NOT NULL DEFAULT 'needs_check'
@@ -41,9 +20,6 @@ CREATE TABLE state_tax_profile (
     notes                       TEXT
 );
 
--- Brackets in LONG form (one row per bracket per filing status).
--- The Tax Foundation export is wide and has "- Alabama" continuation rows;
--- the cleaning step turns it into this shape.
 CREATE TABLE state_income_tax_brackets (
     tax_year            INTEGER NOT NULL,
     state_code          TEXT    NOT NULL REFERENCES state_tax_profile(state_code),
@@ -58,8 +34,6 @@ CREATE TABLE state_income_tax_brackets (
     UNIQUE      (tax_year, state_code, filing_status, lower_bound)
 );
 
--- Standard deduction / personal exemption. Barely matters at athlete income
--- levels, but the engine should still know whether something is a credit.
 CREATE TABLE state_deductions (
     tax_year                  INTEGER NOT NULL,
     state_code                TEXT    NOT NULL REFERENCES state_tax_profile(state_code),
@@ -71,11 +45,6 @@ CREATE TABLE state_deductions (
     PRIMARY KEY (tax_year, state_code, filing_status)
 );
 
--- Millionaire's taxes / surtaxes, kept apart from brackets.
---   MA: 4% over $1,107,750 (2026); threshold not doubled for joint filers;
---       applies to nonresidents on MA-sourced income only; employer withholds
---       only the flat 5%, so the surtax is settled on the player's return.
---   CA: 1% Mental Health Services Tax over $1,000,000.
 CREATE TABLE state_surtaxes (
     tax_year                   INTEGER NOT NULL,
     state_code                 TEXT    NOT NULL REFERENCES state_tax_profile(state_code),
@@ -92,7 +61,6 @@ CREATE TABLE state_surtaxes (
     PRIMARY KEY (tax_year, state_code, surtax_name)
 );
 
--- Cost-of-living layer (dashboard feature); from the Tax Foundation sales tax file.
 CREATE TABLE state_sales_tax (
     tax_year         INTEGER NOT NULL,
     state_code       TEXT    NOT NULL REFERENCES state_tax_profile(state_code),
@@ -102,10 +70,6 @@ CREATE TABLE state_sales_tax (
     combined_rate    REAL,
     PRIMARY KEY (tax_year, state_code)
 );
-
--- ---------------------------------------------------------------------
--- 2. FEDERAL TAX DATA
--- ---------------------------------------------------------------------
 
 CREATE TABLE federal_brackets (
     tax_year            INTEGER NOT NULL,
@@ -134,16 +98,12 @@ CREATE TABLE federal_payroll_params (
     ss_wage_base         REAL NOT NULL,
     medicare_rate        REAL NOT NULL,
     addl_medicare_rate   REAL NOT NULL,
-    salt_cap_effective   REAL,            -- ~10,000 for athletes after phase-down
+    salt_cap_effective   REAL,
     salt_status          TEXT DEFAULT 'needs_check'
 );
 
--- ---------------------------------------------------------------------
--- 3. LOCAL (CITY) TAXES  -- rates change mid-year, so key by effective date
--- ---------------------------------------------------------------------
-
 CREATE TABLE localities (
-    locality_id   TEXT PRIMARY KEY,                    -- e.g. 'PHL','NYC','DET'
+    locality_id   TEXT PRIMARY KEY,
     locality_name TEXT NOT NULL,
     state_code    TEXT NOT NULL REFERENCES state_tax_profile(state_code)
 );
@@ -156,6 +116,9 @@ CREATE TABLE local_income_tax_rates (
     taxes_nonresident_work    INTEGER CHECK (taxes_nonresident_work IN (0,1)),
     apportionment_method      TEXT
         CHECK (apportionment_method IN ('duty_day','days_worked','games_played','flat_fee','none')),
+    tax_base                  TEXT,                                   -- v2: wage | income | earnings | special_nonresident_tax | facility_usage_fee
+    legal_status              TEXT NOT NULL DEFAULT 'in_force'        -- v2: Pittsburgh's fee was struck down 2025-09-25
+        CHECK (legal_status IN ('in_force','struck_down','repealed')),
     verification_status       TEXT NOT NULL DEFAULT 'needs_check'
         CHECK (verification_status IN ('verified','needs_check','stale_2025','provisional')),
     source                    TEXT,
@@ -163,47 +126,40 @@ CREATE TABLE local_income_tax_rates (
     PRIMARY KEY (locality_id, effective_date)
 );
 
--- ---------------------------------------------------------------------
--- 4. JOCK TAX RULES (per state and league: formulas differ by both)
--- ---------------------------------------------------------------------
-
 CREATE TABLE state_jock_tax_rules (
     state_code                    TEXT    NOT NULL REFERENCES state_tax_profile(state_code),
     league                        TEXT    NOT NULL CHECK (league IN ('ALL','NFL','MLB','NHL','NBA')),
     tax_year                      INTEGER NOT NULL,
     sourcing_method               TEXT    NOT NULL
-        CHECK (sourcing_method IN ('duty_day','games_played','flat_fee','general_nonresident')),
-    duty_day_definition           TEXT,     -- what counts: games, practices, meetings, travel
+        CHECK (sourcing_method IN ('duty_day','games_played','flat_fee','general_nonresident','not_taxed')),  -- v2: not_taxed (DC)
+    duty_day_definition           TEXT,
     employer_withholding_required INTEGER CHECK (employer_withholding_required IN (0,1)),
     composite_return_allowed      INTEGER CHECK (composite_return_allowed IN (0,1)),
-    -- Three-part test (Clark): if a bonus is nonrefundable, paid separately,
-    -- and not conditioned on playing, only the residence state taxes it.
     signing_bonus_sourcing        TEXT NOT NULL DEFAULT 'unknown'
-        CHECK (signing_bonus_sourcing IN ('residence','duty_days','unknown')),
-    retaliatory_provision         INTEGER CHECK (retaliatory_provision IN (0,1)),  -- e.g. Illinois
+        CHECK (signing_bonus_sourcing IN ('residence','duty_days','unknown',
+                                          'residence_if_three_part_test',   -- v2: MA, IL, NY
+                                          'partial_duty_days')),            -- v2: CA (conditional part allocated)
+    retaliatory_provision         INTEGER CHECK (retaliatory_provision IN (0,1)),
     statute_citation              TEXT,
     verification_status           TEXT NOT NULL DEFAULT 'needs_check'
         CHECK (verification_status IN ('verified','needs_check','stale_2025','provisional')),
     notes                         TEXT,
+    source_url                    TEXT,                                     -- v2
     PRIMARY KEY (state_code, league, tax_year)
 );
 
--- ---------------------------------------------------------------------
--- 5. TEAMS, PLAYERS, SCHEDULE
--- ---------------------------------------------------------------------
-
--- Stadium and practice jurisdictions are separate on purpose:
--- Lions practice in Allen Park, Browns in Berea, Commanders in VA / games in MD.
 CREATE TABLE teams (
-    team_id            TEXT PRIMARY KEY,                -- e.g. 'NFL_NE'
+    team_id            TEXT PRIMARY KEY,
     league             TEXT NOT NULL CHECK (league IN ('NFL','MLB','NHL','NBA')),
     team_name          TEXT NOT NULL,
     city               TEXT,
-    country            TEXT NOT NULL DEFAULT 'US',      -- non-US teams are out of scope for v1
+    country            TEXT NOT NULL DEFAULT 'US',
     stadium_state      TEXT REFERENCES state_tax_profile(state_code),
     stadium_locality   TEXT REFERENCES localities(locality_id),
     practice_state     TEXT REFERENCES state_tax_profile(state_code),
-    practice_locality  TEXT REFERENCES localities(locality_id)
+    practice_locality  TEXT REFERENCES localities(locality_id),
+    spring_training_state TEXT REFERENCES state_tax_profile(state_code),   -- v2: MLB (FL or AZ)
+    notes              TEXT                                                -- v2
 );
 
 CREATE TABLE players (
@@ -211,12 +167,11 @@ CREATE TABLE players (
     full_name        TEXT NOT NULL,
     league           TEXT NOT NULL CHECK (league IN ('NFL','MLB','NHL','NBA')),
     position         TEXT,
-    residence_state  TEXT REFERENCES state_tax_profile(state_code),  -- separate from team state
-    external_id      TEXT,                              -- e.g. Pro-Football-Reference id
+    residence_state  TEXT REFERENCES state_tax_profile(state_code),
+    external_id      TEXT,
     UNIQUE (league, full_name, external_id)
 );
 
--- Needed by the duty-day apportionment module (Week 7).
 CREATE TABLE schedule_games (
     game_id          INTEGER PRIMARY KEY AUTOINCREMENT,
     league           TEXT NOT NULL,
@@ -231,48 +186,41 @@ CREATE TABLE schedule_games (
 );
 CREATE INDEX idx_schedule_season ON schedule_games (league, season);
 
--- ---------------------------------------------------------------------
--- 6. CONTRACTS (headline terms + year-by-year cash flow)
--- ---------------------------------------------------------------------
-
 CREATE TABLE contracts (
     contract_id               INTEGER PRIMARY KEY AUTOINCREMENT,
     player_id                 INTEGER NOT NULL REFERENCES players(player_id),
     team_id                   TEXT    NOT NULL REFERENCES teams(team_id),
     signed_date               TEXT,
     first_season              INTEGER NOT NULL,
-    last_season               INTEGER NOT NULL,         -- last REAL season, excluding void years
+    last_season               INTEGER NOT NULL,
     total_value               REAL    NOT NULL,
     aav                       REAL,
     total_guaranteed          REAL,
-    -- Residence at signing drives signing-bonus sourcing; keep it per contract.
     residence_state_at_signing TEXT REFERENCES state_tax_profile(state_code),
     is_extension              INTEGER NOT NULL DEFAULT 0 CHECK (is_extension IN (0,1)),
     verification_status       TEXT NOT NULL DEFAULT 'provisional'
         CHECK (verification_status IN ('verified','needs_check','stale_2025','provisional')),
-    source_primary            TEXT,                     -- e.g. Spotrac URL
-    source_secondary          TEXT,                     -- e.g. OverTheCap URL
+    source_primary            TEXT,
+    source_secondary          TEXT,
     accessed_date             TEXT,
     notes                     TEXT,
     CHECK (last_season >= first_season),
-    -- Project rule: 'verified' requires two independent sources.
     CHECK (verification_status <> 'verified'
            OR (source_primary IS NOT NULL AND source_secondary IS NOT NULL))
 );
 CREATE INDEX idx_contracts_player ON contracts (player_id);
 
--- Cash paid vs. cap charge are different things: model both.
 CREATE TABLE contract_years (
     contract_id                 INTEGER NOT NULL REFERENCES contracts(contract_id) ON DELETE CASCADE,
     season                      INTEGER NOT NULL,
     base_salary                 REAL NOT NULL DEFAULT 0,
-    signing_bonus_cash          REAL NOT NULL DEFAULT 0,  -- cash actually paid this year
-    signing_bonus_cap_proration REAL NOT NULL DEFAULT 0,  -- cap accounting only
+    signing_bonus_cash          REAL NOT NULL DEFAULT 0,
+    signing_bonus_cap_proration REAL NOT NULL DEFAULT 0,
     roster_bonus                REAL NOT NULL DEFAULT 0,
-    per_game_bonus              REAL NOT NULL DEFAULT 0,  -- per-game roster bonuses
+    per_game_bonus              REAL NOT NULL DEFAULT 0,
     workout_bonus               REAL NOT NULL DEFAULT 0,
-    incentives_ltbe             REAL NOT NULL DEFAULT 0,  -- "likely to be earned"
-    incentives_nltbe            REAL NOT NULL DEFAULT 0,  -- "not likely to be earned"
+    incentives_ltbe             REAL NOT NULL DEFAULT 0,
+    incentives_nltbe            REAL NOT NULL DEFAULT 0,
     guaranteed_cash             REAL NOT NULL DEFAULT 0,
     cap_hit                     REAL,
     is_void_year                INTEGER NOT NULL DEFAULT 0 CHECK (is_void_year IN (0,1)),
@@ -280,7 +228,6 @@ CREATE TABLE contract_years (
     PRIMARY KEY (contract_id, season)
 );
 
--- Convenience: guaranteed-type cash per year (excludes incentives) for the tax engine.
 CREATE VIEW v_contract_year_cash AS
 SELECT contract_id, season,
        base_salary + signing_bonus_cash + roster_bonus + per_game_bonus + workout_bonus
@@ -288,14 +235,10 @@ SELECT contract_id, season,
        incentives_ltbe, incentives_nltbe, is_void_year
 FROM contract_years;
 
--- ---------------------------------------------------------------------
--- 7. SALARY CAP AND PERFORMANCE
--- ---------------------------------------------------------------------
-
 CREATE TABLE salary_cap (
     league      TEXT    NOT NULL CHECK (league IN ('NFL','MLB','NHL','NBA')),
     season      INTEGER NOT NULL,
-    cap_type    TEXT    NOT NULL CHECK (cap_type IN ('hard_cap','luxury_tax_threshold')),  -- MLB = CBT
+    cap_type    TEXT    NOT NULL CHECK (cap_type IN ('hard_cap','luxury_tax_threshold')),
     cap_amount  REAL    NOT NULL,
     cap_floor   REAL,
     notes       TEXT,
@@ -312,8 +255,6 @@ CREATE TABLE performance (
     PRIMARY KEY (player_id, season)
 );
 
--- League-specific metrics (PFF grades, WAR, ice time) in long form so the
--- schema does not change per league. Missing rows are fine (paywalled data).
 CREATE TABLE performance_metrics (
     player_id     INTEGER NOT NULL REFERENCES players(player_id),
     season        INTEGER NOT NULL,
@@ -322,10 +263,6 @@ CREATE TABLE performance_metrics (
     source        TEXT,
     PRIMARY KEY (player_id, season, metric_name)
 );
-
--- ---------------------------------------------------------------------
--- 8. VALIDATION VIEWS -- every one of these must return ZERO rows
--- ---------------------------------------------------------------------
 
 CREATE VIEW v_federal_brackets AS
 SELECT *, LEAD(lower_bound) OVER (
@@ -337,7 +274,6 @@ SELECT *, LEAD(lower_bound) OVER (
            PARTITION BY tax_year, state_code, filing_status ORDER BY bracket_order) AS upper_bound
 FROM state_income_tax_brackets;
 
--- Every schedule must start at $0.
 CREATE VIEW v_check_bracket_start AS
 SELECT 'federal' AS tbl, tax_year, NULL AS state_code, filing_status
 FROM federal_brackets GROUP BY tax_year, filing_status HAVING MIN(lower_bound) <> 0
@@ -345,7 +281,6 @@ UNION ALL
 SELECT 'state', tax_year, state_code, filing_status
 FROM state_income_tax_brackets GROUP BY tax_year, state_code, filing_status HAVING MIN(lower_bound) <> 0;
 
--- Thresholds must rise with bracket_order.
 CREATE VIEW v_check_bracket_order AS
 SELECT 'federal' AS tbl, tax_year, NULL AS state_code, filing_status, bracket_order
 FROM v_federal_brackets WHERE upper_bound IS NOT NULL AND upper_bound <= lower_bound
@@ -353,7 +288,6 @@ UNION ALL
 SELECT 'state', tax_year, state_code, filing_status, bracket_order
 FROM v_state_brackets WHERE upper_bound IS NOT NULL AND upper_bound <= lower_bound;
 
--- States that tax wages but have no bracket rows (or vice versa).
 CREATE VIEW v_check_state_coverage AS
 SELECT p.state_code, 'taxes wages but no brackets' AS problem
 FROM state_tax_profile p
@@ -363,3 +297,63 @@ UNION ALL
 SELECT DISTINCT b.state_code, 'has brackets but taxes_wages = 0'
 FROM state_income_tax_brackets b JOIN state_tax_profile p USING (state_code)
 WHERE p.taxes_wages = 0;
+
+-- ---------------------------------------------------------------------
+-- 9. v2 (WEEK 4): DUTY DAYS AND RESIDENCY
+-- ---------------------------------------------------------------------
+
+-- League-level duty-day window (FTA uniform rule). Typical totals are defaults only;
+-- the engine counts real days from duty_day_events when they exist.
+CREATE TABLE league_duty_day_rules (
+    league                  TEXT PRIMARY KEY CHECK (league IN ('NFL','MLB','NHL','NBA')),
+    window_start            TEXT NOT NULL,
+    window_end              TEXT NOT NULL,
+    typical_total_duty_days INTEGER,
+    tax_quirk               TEXT,
+    source                  TEXT,
+    verification_status     TEXT NOT NULL DEFAULT 'needs_check'
+        CHECK (verification_status IN ('verified','needs_check','stale_2025','provisional'))
+);
+
+-- Residence is per player per tax year. MA (830 CMR 62.5A.2) counts a person as a resident
+-- if domiciled there OR keeping a permanent abode there and spending >183 days.
+CREATE TABLE player_residency (
+    player_id        INTEGER NOT NULL REFERENCES players(player_id),
+    tax_year         INTEGER NOT NULL,
+    residence_state  TEXT REFERENCES state_tax_profile(state_code),
+    residence_basis  TEXT NOT NULL DEFAULT 'domicile'
+        CHECK (residence_basis IN ('domicile','statutory_resident','assumed')),
+    source           TEXT,
+    PRIMARY KEY (player_id, tax_year)
+);
+
+-- One row per player per calendar day in the duty-day window ("Duty Days" table on the Week 2 slide).
+-- counts_in_state = 0 for travel days with no team event and injured days away from team facilities:
+-- those days stay in the denominator but are not sourced to the state they happen in.
+CREATE TABLE duty_day_events (
+    player_id        INTEGER REFERENCES players(player_id),
+    team_id          TEXT NOT NULL REFERENCES teams(team_id),
+    event_date       TEXT NOT NULL,
+    tax_year         INTEGER NOT NULL,
+    event_type       TEXT NOT NULL CHECK (event_type IN
+        ('game','practice','meeting','travel','injured_team_facility','injured_elsewhere',
+         'offseason_service','promotional')),
+    state_code       TEXT REFERENCES state_tax_profile(state_code),
+    locality_id      TEXT REFERENCES localities(locality_id),
+    counts_in_state  INTEGER NOT NULL CHECK (counts_in_state IN (0,1)),
+    is_projected     INTEGER NOT NULL DEFAULT 0 CHECK (is_projected IN (0,1)),
+    PRIMARY KEY (team_id, event_date, player_id)
+);
+
+-- Duty-day ratio per team/player, tax year and state.
+CREATE VIEW v_duty_day_ratio AS
+WITH tot AS (
+    SELECT team_id, player_id, tax_year, COUNT(*) AS total_days
+    FROM duty_day_events GROUP BY team_id, player_id, tax_year)
+SELECT e.team_id, e.player_id, e.tax_year, e.state_code,
+       SUM(e.counts_in_state) AS state_days, t.total_days,
+       1.0 * SUM(e.counts_in_state) / t.total_days AS ratio
+FROM duty_day_events e
+JOIN tot t ON t.team_id = e.team_id AND t.tax_year = e.tax_year
+          AND (t.player_id IS e.player_id)
+GROUP BY e.team_id, e.player_id, e.tax_year, e.state_code;
