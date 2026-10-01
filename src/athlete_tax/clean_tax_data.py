@@ -2,22 +2,19 @@
 """
 clean_tax_data.py  --  raw Tax Foundation / jock-tax CSVs  ->  tidy CSVs  ->  SQLite
 
-Run from anywhere:   python src/athlete_tax/clean_tax_data.py
-Options:             --root PATH   repo root (default: two folders above this file)
-                     --no-db       write the tidy CSVs but do not build athlete_tax.db
+Run from the repo root:   python db/clean_tax_data.py
+Options:                  --root PATH   repo root (default: auto-detected, the folder that contains db/schema.sql)
+                          --no-db       write the tidy CSVs but do not build athlete_tax.db
 
-Pipeline
-    data/ (or data/raw/)  raw downloads, never edited by hand
-        |   this script: parse, de-footnote, reshape, apply documented overrides
-        v
-    data/processed/*.csv  tidy, schema-shaped, committed to Git (source of truth)
-        |   this script: build DB from db/schema.sql, load, run checks
-        v
-    athlete_tax.db        generated; keep it in .gitignore
-
-Every manual correction lives in the OVERRIDES section below, with its reason,
-so nothing is changed silently. If an upstream file changes so an override no
-longer applies, the script stops and tells you instead of guessing.
+Week 4 changes (see Code Status Report):
+  * root auto-detection (the old default, parents[2], pointed one folder ABOVE the repo)
+  * nonresident_rate_method = 'proration' (effective-rate) for every taxing state, per Tax Foundation 2026
+  * jock-tax rules, local taxes, teams and league duty-day rules now load from data/curated/*.csv
+    (hand-researched, every row sourced). The legacy state_jock_taxes.csv / city_jock_taxes.csv had
+    wrong methods (IL, PA "games played"), a struck-down Pittsburgh fee, Detroit's resident rate for
+    visitors, and no Cincinnati or Maryland rows, so they are no longer read.
+  * Georgia standard deduction updated for HB 463
+  * new checks: Tax Foundation's California effective-rate example ($574), MA visitor below surtax line
 """
 from __future__ import annotations
 
@@ -32,19 +29,8 @@ import pandas as pd
 TAX_YEAR = 2026
 TF_SOURCE = "Tax Foundation, State Individual Income Tax Rates and Brackets 2026 (as of 2026-01-01)"
 
-# =============================================================================
-# OVERRIDES (each comes from the Week 3 memo; remove one once the raw source is fixed)
-# =============================================================================
-
-# Georgia HB 463 (signed 2026-05-11) cut the rate retroactive to 1/1/2026; the Tax Foundation
-# table still shows 5.19%.
 GA_RAW_RATE, GA_NEW_RATE = 0.0519, 0.0499
 
-# Surtaxes are removed from the bracket rows and stored in state_surtaxes so they cannot be
-# double-counted. `raw_threshold` is where the raw file bakes the surtax into a higher bracket.
-#   MA: raw file shows 9% above $1,083,150 (the 2025 threshold). 2026 certified threshold is
-#       $1,107,750 (Mass. DOR Form 1-ES / 2-ES).
-#   CA: raw file shows the 1% Mental Health Services Tax folded into rates at/above $1,000,000.
 SURTAXES = [
     dict(state_code="MA", surtax_name="MA 4% millionaires surtax", raw_threshold=1_083_150,
          threshold=1_107_750, rate=0.04, threshold_doubled_for_mfj=0, applies_to_nonresidents=1,
@@ -61,12 +47,11 @@ SURTAXES = [
                "are defaults, not confirmed. 1.3% SDI payroll tax not modeled."),
 ]
 
-STALE_2025_STATES = {"AR", "CA", "ND", "VT"}          # TF published 2025 bracket widths for 2026
-STATE_ROW_STATUS = {"GA": "verified"}                  # confirmed against HB 463
-# Nonresident rate method: CA/NY/NJ tax ALL income as if in-state, then multiply by the in-state
-# share ('proration'). Everyone else defaults to 'direct' (brackets on the sourced slice) until checked.
-PRORATION_STATES = {"CA", "NY", "NJ"}
-# 21 states with athlete-specific duty-day rules (Tax Notes State, 2024-05-31)
+STALE_2025_STATES = {"AR", "CA", "ND", "VT"}
+STATE_ROW_STATUS = {"GA": "verified"}
+# Week 4: Tax Foundation (Walczak, 2026-09-09) reports that every state uses the effective-rate
+# (proration) method for athletes. CA/NY/NJ were confirmed in Week 3; the rest are 'needs_check'.
+PRORATION_CONFIRMED = {"CA", "NY", "NJ"}
 ATHLETE_DUTY_DAY_RULE_STATES = {"AZ", "CO", "CT", "IA", "IL", "IN", "LA", "MA", "MD", "ME", "MI",
                                 "MO", "NC", "NJ", "NY", "OR", "PA", "RI", "UT", "VA", "WI"}
 STATE_NOTES = {
@@ -74,31 +59,27 @@ STATE_NOTES = {
     "MA": "5% flat + 4% surtax over $1,107,750 (see state_surtaxes).",
     "CA": "Top bracket 12.3% + 1% MHST (state_surtaxes). SDI not modeled.",
     "NY": "Benefit recapture NOT modeled: engine output is a lower bound for very high earners.",
+    "IL": "Duty days in statute; 3-part signing-bonus test; no retaliatory clause in current text.",
+    "PA": "General working-days rule (61 Pa. Code 109.8); not games played.",
     "SC": "Top rate temporarily 6% through 2026-06-30, scheduled to revert to 6.2%. Verify.",
     "MD": "Visitors also owe a special nonresident tax in lieu of county tax (not in brackets).",
     "WA": "No wage income tax; capital gains only (7%/9%). Capital-gains rates intentionally not loaded.",
     "DC": "DC cannot tax nonresidents' wages.",
 }
 
-# Federal parameters that are NOT in the Tax Foundation CSVs (Week 3 memo, IRS Rev. Proc. 2025-32)
-FEDERAL_FILING_PARAMS = [  # tax_year, filing_status, standard_deduction, addl_medicare_threshold
+FEDERAL_FILING_PARAMS = [
     (2026, "single", 16_100, 200_000),
     (2026, "mfj", 32_200, 250_000),
 ]
 FEDERAL_PAYROLL_PARAMS = [dict(tax_year=2026, ss_rate=0.062, ss_wage_base=184_500, medicare_rate=0.0145,
                                addl_medicare_rate=0.009, salt_cap_effective=10_000, salt_status="needs_check")]
 
-# Cities. The raw file gives ONE rate per city with no resident/nonresident split, so the split is
-# documented here. Anything marked needs_check must be verified before the engine relies on it.
-LOCALITIES = {  # city name in CSV -> (locality_id, state_code)
+LOCALITIES = {
     "New York City": ("NYC", "NY"), "Philadelphia": ("PHL", "PA"), "Cleveland": ("CLE", "OH"),
     "Columbus": ("COL", "OH"), "Pittsburgh": ("PIT", "PA"), "Detroit": ("DET", "MI"),
     "Kansas City": ("KCM", "MO"), "St. Louis": ("STL", "MO"),
 }
 
-# =============================================================================
-# Lookups
-# =============================================================================
 STATE_CODES = {
     "Alabama": "AL", "Alaska": "AK", "Arizona": "AZ", "Arkansas": "AR", "California": "CA",
     "Colorado": "CO", "Connecticut": "CT", "Delaware": "DE", "Florida": "FL", "Georgia": "GA",
@@ -115,7 +96,6 @@ STATE_CODES = {
 STATE_NAMES = {c: n for n, c in STATE_CODES.items() if n not in ("DC", "D.C.")}
 STATE_NAMES["DC"] = "District of Columbia"
 
-# Raw file name patterns (matched against the lower-cased, letters+digits-only file stem)
 PATTERNS = {
     "fed_2026": r"^2026taxbracketsandfederalincometaxrates",
     "fed_2025": r"^2025taxbracketsandfederalincometaxrates",
@@ -127,9 +107,7 @@ PATTERNS = {
     "state_jock": r"^statejocktaxes",
 }
 
-# =============================================================================
-# Helpers
-# =============================================================================
+
 def find_raw(root: Path, key: str, required: bool = True):
     hits = []
     for folder in (root / "data", root / "data" / "raw"):
@@ -147,8 +125,8 @@ def find_raw(root: Path, key: str, required: bool = True):
 
 
 def clean_name(s: str) -> str:
-    s = re.sub(r"\s*\([^)]*\)", "", str(s))        # footnote letters
-    s = re.sub(r"^\s*-\s*", "", s)                  # continuation-row dash
+    s = re.sub(r"\s*\([^)]*\)", "", str(s))
+    s = re.sub(r"^\s*-\s*", "", s)
     return s.replace("*", "").strip()
 
 
@@ -170,7 +148,6 @@ def is_money(x) -> bool:
 
 
 def bracket_tax(rows, income: float) -> float:
-    """rows = [(lower_bound, rate), ...] sorted ascending."""
     total = 0.0
     for i, (low, rate) in enumerate(rows):
         upper = rows[i + 1][0] if i + 1 < len(rows) else float("inf")
@@ -179,9 +156,6 @@ def bracket_tax(rows, income: float) -> float:
     return total
 
 
-# =============================================================================
-# Federal
-# =============================================================================
 def clean_federal(path: Path, tax_year: int) -> pd.DataFrame:
     df = pd.read_csv(path)
     df.columns = ["rate", "single", "mfj", "hoh"]
@@ -190,8 +164,6 @@ def clean_federal(path: Path, tax_year: int) -> pd.DataFrame:
         prev_upper = 0.0
         for i, (r, rng) in enumerate(zip(df["rate"], df[fs]), start=1):
             nums = [float(n.replace(",", "")) for n in re.findall(r"\$([\d,]+)", str(rng).replace("\xa0", " "))]
-            # Files differ: 2024/2025 write "$11,600 to ..." , 2026 writes "$12,401 to ...".
-            # Using the previous bracket's upper bound as this bracket's lower bound handles both.
             lower = 0.0 if i == 1 else prev_upper
             if i > 1 and nums[0] not in (prev_upper, prev_upper + 1):
                 sys.exit(f"ERROR: federal {tax_year} {fs}: bracket {i} starts at {nums[0]}, "
@@ -201,7 +173,7 @@ def clean_federal(path: Path, tax_year: int) -> pd.DataFrame:
                              rate=pct(r), verification_status="needs_check",
                              source=f"Tax Foundation {tax_year} federal brackets"))
     out = pd.DataFrame(rows)
-    if tax_year == 2026:   # IRS-published cumulative tax at the 37% threshold (see memo)
+    if tax_year == 2026:
         ok = True
         for fs, top, expected in (("single", 640_600, 192_979.25), ("mfj", 768_700, 206_583.50)):
             b = out[out.filing_status == fs].sort_values("bracket_order")
@@ -212,39 +184,34 @@ def clean_federal(path: Path, tax_year: int) -> pd.DataFrame:
     return out
 
 
-# =============================================================================
-# State brackets, profile, surtaxes, deductions
-# =============================================================================
 def parse_state_brackets(df: pd.DataFrame):
     d = df.iloc[:, [0, 1, 3, 4, 6]].copy()
     d.columns = ["raw", "s_rate", "s_low", "m_rate", "m_low"]
     out = {}
     for _, r in d.iterrows():
         name = clean_name(r["raw"])
-        if name == "Washington":                       # capital-gains rates only, not wages
+        if name == "Washington":
             continue
         if name not in STATE_CODES:
             sys.exit(f"ERROR: unrecognised state name in raw file: {name!r}")
         code = STATE_CODES[name]
         for fs, rate, low in (("single", r["s_rate"], r["s_low"]), ("mfj", r["m_rate"], r["m_low"])):
-            if is_pct(rate) and is_money(low):         # skips 'none', NaN placeholder rows, text rows
+            if is_pct(rate) and is_money(low):
                 out.setdefault((code, fs), []).append((money(low), pct(rate)))
     for key, rows in out.items():
         rows.sort()
-        if rows[0][0] > 0:                             # ID, MS, OH, ND, DE, MO, OK ...: 0% below first bracket
+        if rows[0][0] > 0:
             rows.insert(0, (0.0, 0.0))
     return out
 
 
 def apply_overrides(brackets: dict):
-    # Georgia
     for fs in ("single", "mfj"):
         rows = brackets[("GA", fs)]
         if len(rows) != 1 or abs(rows[0][1] - GA_RAW_RATE) > 1e-9:
             sys.exit(f"ERROR: Georgia raw data is no longer a single {GA_RAW_RATE:.2%} bracket "
                      f"({rows}). Review the GA override.")
         brackets[("GA", fs)] = [(rows[0][0], GA_NEW_RATE)]
-    # Surtaxes: subtract from the baked-in rates, then merge equal neighbours
     for s in SURTAXES:
         for fs in ("single", "mfj"):
             rows = brackets[(s["state_code"], fs)]
@@ -261,7 +228,6 @@ def apply_overrides(brackets: dict):
             if not changed:
                 sys.exit(f"ERROR: {s['state_code']} {fs}: nothing at/above ${s['raw_threshold']:,} to strip.")
             brackets[(s["state_code"], fs)] = new
-    # Sanity: rates never fall as income rises
     for (code, fs), rows in brackets.items():
         rates = [r for _, r in rows]
         if rates != sorted(rates):
@@ -271,7 +237,6 @@ def apply_overrides(brackets: dict):
 
 def build_state_tables(raw: pd.DataFrame, class_path):
     brackets = apply_overrides(parse_state_brackets(raw))
-    # ---- brackets
     rows = []
     for (code, fs), lst in sorted(brackets.items()):
         status = ("stale_2025" if code in STALE_2025_STATES else STATE_ROW_STATUS.get(code, "needs_check"))
@@ -282,7 +247,6 @@ def build_state_tables(raw: pd.DataFrame, class_path):
                              if code == "GA" else TF_SOURCE))
     brk = pd.DataFrame(rows)
 
-    # ---- profile (derive tax type from the data)
     derived = {}
     for code in STATE_NAMES:
         if code == "WA":
@@ -292,7 +256,7 @@ def build_state_tables(raw: pd.DataFrame, class_path):
         else:
             pos = {r for _, r in brackets[(code, "single")] if r > 0}
             derived[code] = "flat" if len(pos) == 1 else "graduated"
-    if class_path is not None:                         # cross-check against TF's own classification
+    if class_path is not None:
         cls = pd.read_csv(class_path)
         for col, label in zip(cls.columns, ("none", "flat", "graduated")):
             for n in cls[col].dropna():
@@ -308,17 +272,15 @@ def build_state_tables(raw: pd.DataFrame, class_path):
         taxes = derived[code] in ("flat", "graduated")
         prof.append(dict(
             state_code=code, state_name=name, income_tax_type=derived[code], taxes_wages=int(taxes),
-            nonresident_rate_method="proration" if code in PRORATION_STATES else "direct",
-            nonresident_method_status=("verified" if (code in PRORATION_STATES or not taxes) else "needs_check"),
+            nonresident_rate_method="proration",
+            nonresident_method_status=("verified" if (code in PRORATION_CONFIRMED or not taxes) else "needs_check"),
             has_athlete_duty_day_rule=int(code in ATHLETE_DUTY_DAY_RULE_STATES),
             notes=STATE_NOTES.get(code)))
     prof = pd.DataFrame(prof)
 
-    # ---- surtaxes
     sur = pd.DataFrame([{"tax_year": TAX_YEAR, **{k: v for k, v in s.items() if k != "raw_threshold"}}
                         for s in SURTAXES])
 
-    # ---- deductions / exemptions (single and married-joint columns only)
     def parse_amt(x):
         if pd.isna(x) or str(x).strip().lower().startswith("n.a"):
             return None, 0
@@ -339,12 +301,12 @@ def build_state_tables(raw: pd.DataFrame, class_path):
             ded.append(dict(tax_year=TAX_YEAR, state_code=STATE_CODES[name], filing_status=fs,
                             standard_deduction=sd_v, std_deduction_is_credit=sd_c,
                             personal_exemption=pe_v, exemption_is_credit=pe_c))
-    return brk, prof, sur, pd.DataFrame(ded), brackets
+    ded = pd.DataFrame(ded)
+    # Georgia HB 463 raised the single standard deduction from $12,000 to $15,000 for 2026.
+    ded.loc[(ded.state_code == "GA") & (ded.filing_status == "single"), "standard_deduction"] = 15_000
+    return brk, prof, sur, ded, brackets
 
 
-# =============================================================================
-# Sales tax, local, jock
-# =============================================================================
 def clean_sales(path: Path) -> pd.DataFrame:
     t = pd.read_csv(path)
     return pd.DataFrame(dict(
@@ -353,89 +315,35 @@ def clean_sales(path: Path) -> pd.DataFrame:
         max_local_rate=t["Max Local Rate"].map(pct), combined_rate=t["Combined Tax Rate"].map(pct)))
 
 
-def clean_local(path: Path):
-    c = pd.read_csv(path)
-    loc, rates = [], []
-    for _, r in c.iterrows():
-        city = str(r["City"]).strip()
-        if city not in LOCALITIES:
-            sys.exit(f"ERROR: city {city!r} not in LOCALITIES. Add it (id, state) in the OVERRIDES section.")
-        lid, st = LOCALITIES[city]
-        csv_rate, csv_note = pct(r["City Rate"]), str(r["Notes"]).strip()
-        loc.append(dict(locality_id=lid, locality_name=city, state_code=st))
-        base = dict(locality_id=lid, verification_status="needs_check", source="city_jock_taxes.csv")
-        if lid == "NYC":      # memo: residents only; commuter tax repealed 1999
-            rates.append({**base, "effective_date": "2026-01-01", "resident_rate": csv_rate,
-                          "nonresident_rate": 0.0, "taxes_nonresident_work": 0, "apportionment_method": "none",
-                          "notes": f"CSV: {csv_note}. Per Week 3 memo NYC taxes residents only; visitors owe nothing."})
-        elif lid == "PHL":    # memo: nonresident wage tax 3.43% before 2026-07-01, 3.425% from then
-            for eff, rate in (("2026-01-01", 0.0343), ("2026-07-01", 0.03425)):
-                rates.append({**base, "effective_date": eff, "resident_rate": None, "nonresident_rate": rate,
-                              "taxes_nonresident_work": 1, "apportionment_method": None,
-                              "verification_status": "verified",
-                              "source": "City of Philadelphia Dept. of Revenue (via Week 3 memo)",
-                              "notes": f"CSV says {csv_rate:.2%}; memo/city figures used instead. Resident rate not loaded."})
-        elif lid == "PIT":   # memo: facility usage fee on nonresidents at publicly funded venues
-            rates.append({**base, "effective_date": "2026-01-01", "resident_rate": None, "nonresident_rate": csv_rate,
-                          "taxes_nonresident_work": 1, "apportionment_method": "flat_fee",
-                          "notes": f"CSV: {csv_note}. Treated as the facility usage fee on nonresident performers; verify."})
-        elif lid == "DET":
-            rates.append({**base, "effective_date": "2026-01-01", "resident_rate": csv_rate, "nonresident_rate": None,
-                          "taxes_nonresident_work": 1, "apportionment_method": None,
-                          "notes": f"CSV: {csv_note}. 2.4% is likely the RESIDENT rate; the nonresident rate is "
-                                   "commonly cited as half (1.2%). Verify before use."})
-        else:                 # CLE, COL, KCM, STL
-            rates.append({**base, "effective_date": "2026-01-01", "resident_rate": csv_rate, "nonresident_rate": csv_rate,
-                          "taxes_nonresident_work": 1, "apportionment_method": None,
-                          "notes": f"CSV: {csv_note}. Single CSV rate ASSUMED to apply equally to residents and "
-                                   "nonresidents working in the city; verify."})
-    return pd.DataFrame(loc), pd.DataFrame(rates)
+def load_curated(root: Path):
+    """Week 4 hand-researched tables. Every row carries a source and a verification_status."""
+    cur = root / "data" / "curated"
+    need = ["local_tax_rates_2026.csv", "jock_tax_rules_2026.csv", "teams.csv", "league_duty_day_rules.csv"]
+    missing = [f for f in need if not (cur / f).exists()]
+    if missing:
+        sys.exit(f"ERROR: missing curated files in data/curated/: {missing}")
+    lt = pd.read_csv(cur / "local_tax_rates_2026.csv")
+    loc = lt[["locality_id", "locality_name", "state_code"]].drop_duplicates("locality_id")
+    rates = lt.drop(columns=["locality_name", "state_code"])
+    jock = pd.read_csv(cur / "jock_tax_rules_2026.csv")
+    teams = pd.read_csv(cur / "teams.csv")
+    rules = pd.read_csv(cur / "league_duty_day_rules.csv")
+    # sanity checks on hand-entered data
+    bad = jock[jock.sourcing_method == "games_played"]
+    if len(bad):
+        sys.exit(f"ERROR: games_played found for {list(bad.state_code)}; no 2026 source supports it.")
+    for col in ("stadium_state", "practice_state"):
+        us = teams[teams.country == "US"]
+        if us[col].isna().any():
+            sys.exit(f"ERROR: US team missing {col}: {list(us[us[col].isna()].team_id)}")
+    return loc, rates, jock, teams, rules
 
 
-def clean_jock(path: Path, brackets: dict) -> pd.DataFrame:
-    j = pd.read_csv(path)
-    method_map = {"duty days": "duty_day", "games played": "games_played"}
-    rows, mismatches = [], 0
-    surtax = {s["state_code"]: s["rate"] for s in SURTAXES}
-    for _, r in j.iterrows():
-        code = STATE_CODES[clean_name(r["State"])]
-        raw_method = str(r["Allocation Method"]).strip()
-        key = re.sub(r"\s*\(.*\)", "", raw_method).strip().lower()
-        notes = [f"CSV allocation method: '{raw_method}'."]
-        if key in method_map:
-            method = method_map[key]
-        else:                                          # 'Duty days or games played' (Ohio)
-            method = "duty_day"
-            notes.append("CSV gives two methods; duty_day used as default. Verify.")
-        if method == "games_played" and code in ATHLETE_DUTY_DAY_RULE_STATES:
-            notes.append("CONFLICT: Tax Notes (2024) lists an athlete duty-day rule for this state. "
-                         "Read the statute and resolve.")
-        if code == "CA":
-            notes.append("CA allocates signing bonuses by duty days (Testaverde dispute): flag CA contracts.")
-        # informational: does the CSV's 'Top Rate' agree with the bracket data?
-        top_csv = float(re.search(r"[\d.]+", str(r["Top Rate"])).group()) / 100
-        top_brk = max(rate for _, rate in brackets[(code, "single")]) + surtax.get(code, 0.0)
-        mismatches += abs(top_csv - top_brk) > 0.0005
-        rows.append(dict(
-            state_code=code, league="ALL", tax_year=TAX_YEAR, sourcing_method=method, duty_day_definition=None,
-            employer_withholding_required=None, composite_return_allowed=None,
-            signing_bonus_sourcing={"CA": "duty_days", "NY": "residence"}.get(code, "unknown"),
-            retaliatory_provision=1 if code == "IL" else None,
-            statute_citation="35 ILCS 5/304" if code == "IL" else None,
-            verification_status="needs_check", notes=" ".join(notes)))
-    print(f"  jock file 'Top Rate' disagrees with the bracket data for {mismatches} of {len(j)} states "
-          "(column ignored; brackets are the source of truth)")
-    return pd.DataFrame(rows)
-
-
-# =============================================================================
-# Database
-# =============================================================================
 INT_COLS = {"has_athlete_duty_day_rule", "taxes_wages", "std_deduction_is_credit", "exemption_is_credit",
             "threshold_doubled_for_mfj", "applies_to_nonresidents", "withheld_by_employer",
             "taxes_nonresident_work", "employer_withholding_required", "composite_return_allowed",
-            "retaliatory_provision", "bracket_order", "tax_year"}
-LOAD_ORDER = [  # parents before children
+            "retaliatory_provision", "bracket_order", "tax_year", "typical_total_duty_days"}
+LOAD_ORDER = [
     ("state_tax_profile", "state_tax_profile_2026.csv"),
     ("state_income_tax_brackets", "state_income_tax_brackets_2026.csv"),
     ("state_deductions", "state_deductions_2026.csv"),
@@ -447,6 +355,8 @@ LOAD_ORDER = [  # parents before children
     ("localities", "localities.csv"),
     ("local_income_tax_rates", "local_income_tax_rates.csv"),
     ("state_jock_tax_rules", "state_jock_tax_rules_2026.csv"),
+    ("teams", "teams.csv"),
+    ("league_duty_day_rules", "league_duty_day_rules.csv"),
 ]
 
 
@@ -495,15 +405,44 @@ def run_checks(con: sqlite3.Connection) -> bool:
         good = abs(got - exp) < 0.01
         print(f"  Federal {fs} cumulative tax at ${top:,}: IRS ${exp:,.2f}  got ${got:,.2f}  {'OK' if good else 'FAIL'}")
         ok &= good
+    # Week 4 checks
+    print("\nWeek 4 checks:")
+    ca = rows("CA")
+    eff = bracket_tax(ca, 100_000) * (10_000 / 100_000)
+    good = abs(eff - 574) < 1
+    print(f"  CA effective-rate example (Tax Foundation 2026): TF $574  got ${eff:,.2f}  {'OK' if good else 'FAIL'}")
+    ok &= good
+    direct = bracket_tax(ca, 10_000)
+    good = abs(direct - 100) < 0.01
+    print(f"  CA brackets-on-slice for the same $10,000: TF $100  got ${direct:,.2f}  {'OK' if good else 'FAIL'}")
+    ok &= good
+    pit = con.execute("SELECT legal_status FROM local_income_tax_rates WHERE locality_id='PIT'").fetchone()
+    good = pit is not None and pit[0] == "struck_down"
+    print(f"  Pittsburgh facility fee marked struck_down: {'OK' if good else 'FAIL'}")
+    ok &= good
+    il = con.execute("SELECT sourcing_method, retaliatory_provision FROM state_jock_tax_rules WHERE state_code='IL'").fetchone()
+    good = il == ("duty_day", 0)
+    print(f"  Illinois = duty days, no retaliatory clause: {'OK' if good else 'FAIL'}")
+    ok &= good
+    n_teams = con.execute("SELECT league, COUNT(*) FROM teams GROUP BY league").fetchall()
+    good = dict(n_teams) == {"MLB": 30, "NFL": 32, "NHL": 32}
+    print(f"  Teams loaded {dict(n_teams)}: {'OK' if good else 'FAIL'}")
+    ok &= good
     return ok
 
 
-# =============================================================================
-# Main
-# =============================================================================
+def find_repo_root() -> Path:
+    """Walk up from this file until we find the folder that holds db/schema.sql."""
+    here = Path(__file__).resolve()
+    for parent in [here.parent, *here.parents]:
+        if (parent / "db" / "schema.sql").exists():
+            return parent
+    return Path.cwd()
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])
+    ap.add_argument("--root", type=Path, default=find_repo_root())
     ap.add_argument("--no-db", action="store_true")
     args = ap.parse_args()
     root, processed = args.root.resolve(), args.root.resolve() / "data" / "processed"
@@ -525,8 +464,7 @@ def main():
     p_sales = find_raw(root, "sales", required=False)
     sales = clean_sales(p_sales) if p_sales else pd.DataFrame(
         columns=["tax_year", "state_code", "state_rate", "avg_local_rate", "max_local_rate", "combined_rate"])
-    p_city = find_raw(root, "city_jock"); loc, loc_rates = clean_local(p_city)
-    p_sj = find_raw(root, "state_jock"); jock = clean_jock(p_sj, brackets)
+    loc, loc_rates, jock, teams, rules = load_curated(root)
 
     tables = {
         "state_tax_profile_2026.csv": prof, "state_income_tax_brackets_2026.csv": brk,
@@ -536,6 +474,7 @@ def main():
             "tax_year", "filing_status", "standard_deduction", "addl_medicare_threshold"]),
         "federal_payroll_params.csv": pd.DataFrame(FEDERAL_PAYROLL_PARAMS),
         "localities.csv": loc, "local_income_tax_rates.csv": loc_rates, "state_jock_tax_rules_2026.csv": jock,
+        "teams.csv": teams, "league_duty_day_rules.csv": rules,
     }
     print("\nWriting data/processed/:")
     for fname, df in tables.items():
