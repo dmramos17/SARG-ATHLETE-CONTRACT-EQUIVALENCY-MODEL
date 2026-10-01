@@ -1,0 +1,4 @@
+league,window_start,window_end,typical_total_duty_days,tax_quirk,source,verification_status
+NFL,Start of official preseason training (training camp),Last game incl. postseason,170,Two tax years: January playoff days belong to the next calendar year,https://taxfoundation.org/blog/common-tax-problem-you-me-patrick-mahomes/,needs_check
+MLB,Start of spring training,Last game incl. postseason,230,Spring training sourced to FL or AZ,,needs_check
+NHL,Start of training camp,Last game incl. postseason,210,Every season spans two tax years,,needs_check
