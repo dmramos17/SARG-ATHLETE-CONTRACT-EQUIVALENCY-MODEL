@@ -1,0 +1,11 @@
+locality_id,locality_name,state_code
+NYC,New York City,NY
+PHL,Philadelphia,PA
+PIT,Pittsburgh,PA
+DET,Detroit,MI
+CLE,Cleveland,OH
+CIN,Cincinnati,OH
+COL,Columbus,OH
+KCM,Kansas City,MO
+STL,St. Louis,MO
+MDNR,Maryland special nonresident tax,MD

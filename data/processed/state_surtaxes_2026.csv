@@ -1,0 +1,3 @@
+tax_year,state_code,surtax_name,threshold,rate,threshold_doubled_for_mfj,applies_to_nonresidents,withheld_by_employer,verification_status,source,notes
+2026,MA,MA 4% millionaires surtax,1107750,0.04,0,1,0,verified,Mass. DOR 2026 Form 1-ES/2-ES instructions,"Marginal, not a cliff. Not doubled for joint filers. Nonresidents owe it only on MA-sourced income above the threshold. Employer withholds only the flat 5%; surtax is settled on the individual return."
+2026,CA,CA 1% Mental Health Services Tax,1000000,0.01,0,1,0,needs_check,Tax Foundation 2026; Week 3 memo,"Threshold not doubled or indexed. applies_to_nonresidents and withheld_by_employer are defaults, not confirmed. 1.3% SDI payroll tax not modeled."

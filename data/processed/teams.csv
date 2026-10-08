@@ -1,0 +1,95 @@
+team_id,league,team_name,city,country,stadium_state,stadium_locality,practice_state,practice_locality,spring_training_state,notes
+NFL_ARI,NFL,Arizona Cardinals,Glendale,US,AZ,,AZ,,,
+NFL_ATL,NFL,Atlanta Falcons,Atlanta,US,GA,,GA,,,
+NFL_BAL,NFL,Baltimore Ravens,Baltimore,US,MD,,MD,,,Practice: Owings Mills
+NFL_BUF,NFL,Buffalo Bills,Orchard Park,US,NY,,NY,,,
+NFL_CAR,NFL,Carolina Panthers,Charlotte,US,NC,,NC,,,
+NFL_CHI,NFL,Chicago Bears,Chicago,US,IL,,IL,,,Practice: Lake Forest
+NFL_CIN,NFL,Cincinnati Bengals,Cincinnati,US,OH,CIN,OH,CIN,,
+NFL_CLE,NFL,Cleveland Browns,Cleveland,US,OH,CLE,OH,,,Practice: Berea (city tax TBD)
+NFL_DAL,NFL,Dallas Cowboys,Arlington,US,TX,,TX,,,Practice: Frisco
+NFL_DEN,NFL,Denver Broncos,Denver,US,CO,,CO,,,Practice: Englewood
+NFL_DET,NFL,Detroit Lions,Detroit,US,MI,DET,MI,,,Practice: Allen Park (no Detroit tax on practice days)
+NFL_GB,NFL,Green Bay Packers,Green Bay,US,WI,,WI,,,
+NFL_HOU,NFL,Houston Texans,Houston,US,TX,,TX,,,
+NFL_IND,NFL,Indianapolis Colts,Indianapolis,US,IN,,IN,,,County tax TBD
+NFL_JAX,NFL,Jacksonville Jaguars,Jacksonville,US,FL,,FL,,,
+NFL_KC,NFL,Kansas City Chiefs,Kansas City,US,MO,KCM,MO,KCM,,
+NFL_LV,NFL,Las Vegas Raiders,Paradise,US,NV,,NV,,,Practice: Henderson
+NFL_LAC,NFL,Los Angeles Chargers,Inglewood,US,CA,,CA,,,Practice: El Segundo
+NFL_LAR,NFL,Los Angeles Rams,Inglewood,US,CA,,CA,,,Practice: Woodland Hills
+NFL_MIA,NFL,Miami Dolphins,Miami Gardens,US,FL,,FL,,,
+NFL_MIN,NFL,Minnesota Vikings,Minneapolis,US,MN,,MN,,,Practice: Eagan
+NFL_NE,NFL,New England Patriots,Foxborough,US,MA,,MA,,,Flagship case
+NFL_NO,NFL,New Orleans Saints,New Orleans,US,LA,,LA,,,Practice: Metairie
+NFL_NYG,NFL,New York Giants,East Rutherford,US,NJ,,NJ,,,New Jersey employer
+NFL_NYJ,NFL,New York Jets,East Rutherford,US,NJ,,NJ,,,New Jersey employer; practice: Florham Park
+NFL_PHI,NFL,Philadelphia Eagles,Philadelphia,US,PA,PHL,PA,PHL,,
+NFL_PIT,NFL,Pittsburgh Steelers,Pittsburgh,US,PA,PIT,PA,PIT,,
+NFL_SF,NFL,San Francisco 49ers,Santa Clara,US,CA,,CA,,,
+NFL_SEA,NFL,Seattle Seahawks,Seattle,US,WA,,WA,,,Practice: Renton
+NFL_TB,NFL,Tampa Bay Buccaneers,Tampa,US,FL,,FL,,,
+NFL_TEN,NFL,Tennessee Titans,Nashville,US,TN,,TN,,,
+NFL_WAS,NFL,Washington Commanders,Landover,US,MD,MDNR,VA,,,"Games in MD, practice in Ashburn VA"
+MLB_ARI,MLB,Arizona Diamondbacks,Phoenix,US,AZ,,AZ,,AZ,
+MLB_ATH,MLB,Athletics,West Sacramento,US,CA,,CA,,AZ,"Temporary home through 2027, then Las Vegas"
+MLB_ATL,MLB,Atlanta Braves,Atlanta,US,GA,,GA,,FL,
+MLB_BAL,MLB,Baltimore Orioles,Baltimore,US,MD,MDNR,MD,,FL,
+MLB_BOS,MLB,Boston Red Sox,Boston,US,MA,,MA,,FL,
+MLB_CHC,MLB,Chicago Cubs,Chicago,US,IL,,IL,,AZ,
+MLB_CWS,MLB,Chicago White Sox,Chicago,US,IL,,IL,,AZ,
+MLB_CIN,MLB,Cincinnati Reds,Cincinnati,US,OH,CIN,OH,,AZ,
+MLB_CLE,MLB,Cleveland Guardians,Cleveland,US,OH,CLE,OH,,AZ,
+MLB_COL,MLB,Colorado Rockies,Denver,US,CO,,CO,,AZ,
+MLB_DET,MLB,Detroit Tigers,Detroit,US,MI,DET,MI,,FL,
+MLB_HOU,MLB,Houston Astros,Houston,US,TX,,TX,,FL,
+MLB_KC,MLB,Kansas City Royals,Kansas City,US,MO,KCM,MO,,AZ,
+MLB_LAA,MLB,Los Angeles Angels,Anaheim,US,CA,,CA,,AZ,
+MLB_LAD,MLB,Los Angeles Dodgers,Los Angeles,US,CA,,CA,,AZ,
+MLB_MIA,MLB,Miami Marlins,Miami,US,FL,,FL,,FL,
+MLB_MIL,MLB,Milwaukee Brewers,Milwaukee,US,WI,,WI,,AZ,
+MLB_MIN,MLB,Minnesota Twins,Minneapolis,US,MN,,MN,,FL,
+MLB_NYM,MLB,New York Mets,New York,US,NY,NYC,NY,,FL,
+MLB_NYY,MLB,New York Yankees,New York,US,NY,NYC,NY,,FL,
+MLB_PHI,MLB,Philadelphia Phillies,Philadelphia,US,PA,PHL,PA,,FL,
+MLB_PIT,MLB,Pittsburgh Pirates,Pittsburgh,US,PA,PIT,PA,,FL,
+MLB_SD,MLB,San Diego Padres,San Diego,US,CA,,CA,,AZ,
+MLB_SF,MLB,San Francisco Giants,San Francisco,US,CA,,CA,,AZ,
+MLB_SEA,MLB,Seattle Mariners,Seattle,US,WA,,WA,,AZ,
+MLB_STL,MLB,St. Louis Cardinals,St. Louis,US,MO,STL,MO,,FL,
+MLB_TB,MLB,Tampa Bay Rays,St. Petersburg,US,FL,,FL,,FL,Venue status after 2024 storm damage: verify
+MLB_TEX,MLB,Texas Rangers,Arlington,US,TX,,TX,,AZ,
+MLB_TOR,MLB,Toronto Blue Jays,Toronto,CA,,,,,FL,Canada: out of scope v1
+MLB_WSH,MLB,Washington Nationals,Washington,US,DC,,DC,,FL,DC cannot tax nonresident wages
+NHL_ANA,NHL,Anaheim Ducks,Anaheim,US,CA,,CA,,,
+NHL_BOS,NHL,Boston Bruins,Boston,US,MA,,MA,,,
+NHL_BUF,NHL,Buffalo Sabres,Buffalo,US,NY,,NY,,,
+NHL_CGY,NHL,Calgary Flames,Calgary,CA,,,,,,Canada: out of scope v1
+NHL_CAR,NHL,Carolina Hurricanes,Raleigh,US,NC,,NC,,,
+NHL_CHI,NHL,Chicago Blackhawks,Chicago,US,IL,,IL,,,
+NHL_COL,NHL,Colorado Avalanche,Denver,US,CO,,CO,,,Practice: Centennial
+NHL_CBJ,NHL,Columbus Blue Jackets,Columbus,US,OH,COL,OH,,,
+NHL_DAL,NHL,Dallas Stars,Dallas,US,TX,,TX,,,Practice: Frisco
+NHL_DET,NHL,Detroit Red Wings,Detroit,US,MI,DET,MI,,,
+NHL_EDM,NHL,Edmonton Oilers,Edmonton,CA,,,,,,Canada: out of scope v1
+NHL_FLA,NHL,Florida Panthers,Sunrise,US,FL,,FL,,,
+NHL_LAK,NHL,Los Angeles Kings,Los Angeles,US,CA,,CA,,,Practice: El Segundo
+NHL_MIN,NHL,Minnesota Wild,St. Paul,US,MN,,MN,,,
+NHL_MTL,NHL,Montreal Canadiens,Montreal,CA,,,,,,Canada: out of scope v1
+NHL_NSH,NHL,Nashville Predators,Nashville,US,TN,,TN,,,
+NHL_NJD,NHL,New Jersey Devils,Newark,US,NJ,,NJ,,,
+NHL_NYI,NHL,New York Islanders,Elmont,US,NY,,NY,,,UBS Arena is outside NYC
+NHL_NYR,NHL,New York Rangers,New York,US,NY,NYC,NY,,,Practice: Greenburgh
+NHL_OTT,NHL,Ottawa Senators,Ottawa,CA,,,,,,Canada: out of scope v1
+NHL_PHI,NHL,Philadelphia Flyers,Philadelphia,US,PA,PHL,NJ,,,Practice: Voorhees NJ (verify)
+NHL_PIT,NHL,Pittsburgh Penguins,Pittsburgh,US,PA,PIT,PA,,,Practice: Cranberry Twp
+NHL_SJS,NHL,San Jose Sharks,San Jose,US,CA,,CA,,,
+NHL_SEA,NHL,Seattle Kraken,Seattle,US,WA,,WA,,,
+NHL_STL,NHL,St. Louis Blues,St. Louis,US,MO,STL,MO,,,Practice: Maryland Heights (outside city)
+NHL_TBL,NHL,Tampa Bay Lightning,Tampa,US,FL,,FL,,,
+NHL_TOR,NHL,Toronto Maple Leafs,Toronto,CA,,,,,,Canada: out of scope v1
+NHL_UTA,NHL,Utah Mammoth,Salt Lake City,US,UT,,UT,,,
+NHL_VAN,NHL,Vancouver Canucks,Vancouver,CA,,,,,,Canada: out of scope v1
+NHL_VGK,NHL,Vegas Golden Knights,Las Vegas,US,NV,,NV,,,
+NHL_WSH,NHL,Washington Capitals,Washington,US,DC,,VA,,,"Games in DC, practice in Arlington VA"
+NHL_WPG,NHL,Winnipeg Jets,Winnipeg,CA,,,,,,Canada: out of scope v1

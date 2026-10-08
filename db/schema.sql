@@ -6,6 +6,17 @@
 PRAGMA foreign_keys = ON;
 PRAGMA user_version = 2;
 
+-- Curated research snapshots retain field provenance and unresolved discrepancies.
+-- These are not promoted into verified contract_years until component sourcing is checked.
+CREATE TABLE research_contract_snapshots (
+    snapshot_id TEXT PRIMARY KEY,
+    player_name TEXT NOT NULL,
+    tax_year INTEGER NOT NULL,
+    accessed_date TEXT NOT NULL,
+    verification_status TEXT NOT NULL,
+    data_json TEXT NOT NULL
+);
+
 CREATE TABLE state_tax_profile (
     state_code                  TEXT PRIMARY KEY CHECK (length(state_code) = 2),
     state_name                  TEXT NOT NULL UNIQUE,

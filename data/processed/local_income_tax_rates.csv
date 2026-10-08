@@ -1,0 +1,12 @@
+locality_id,effective_date,resident_rate,nonresident_rate,taxes_nonresident_work,apportionment_method,tax_base,legal_status,verification_status,source,notes
+NYC,2026-01-01,0.03876,0.0,0,none,income,in_force,needs_check,Week 3 memo,Residents only (commuter tax repealed 1999). Resident rate is the top bracket.
+PHL,2026-01-01,0.0374,0.0343,1,duty_day,wage,in_force,verified,https://www.phila.gov/services/payments-assistance-taxes/taxes/business-taxes/business-taxes-by-type/wage-tax-employers/,
+PHL,2026-07-01,0.03735,0.03425,1,duty_day,wage,in_force,verified,https://www.phila.gov/services/payments-assistance-taxes/taxes/business-taxes/business-taxes-by-type/wage-tax-employers/,Steps down to 3.70%/3.39% by 2030.
+PIT,2026-01-01,0.01,0.0,0,none,facility_usage_fee,struck_down,needs_check,https://www.pacourts.us/assets/opinions/Supreme/out/J-25-2025mo%20-%20106520854328089658.pdf?cb=1,"3% nonresident facility fee struck down by PA Supreme Court 2025-09-25. News reports say visitors now owe the 1% city tax: unconfirmed, so nonresident_rate set to 0 pending verification."
+DET,2026-01-01,0.024,0.012,1,duty_day,income,in_force,needs_check,https://ustax.tools/detroit-income-tax-calculator/,Michigan city taxes keep a 2:1 resident:nonresident ratio.
+CLE,2026-01-01,0.025,0.025,1,duty_day,income,in_force,needs_check,https://bdblaw.com/municipal-income-tax-clevelands-method-of-imposing-jock-tax-struck-down-by-ohio-supreme-court/,Duty days required (Hillenmeyer 2015); no tax if player did not travel (Saturday 2015).
+CIN,2026-01-01,0.018,0.018,1,duty_day,income,in_force,verified,https://vendorselfservice.cincinnati-oh.gov/finance/income-taxes/athletes-entertainers/,Paying agent withholds 1.8% (Form CIT-AE). Missing from old CSV.
+COL,2026-01-01,0.025,0.025,1,duty_day,income,in_force,needs_check,https://www.tidesbookkeeping.com/blog-ohio-municipal-income-tax-rita-guide,
+KCM,2026-01-01,0.01,0.01,1,duty_day,earnings,in_force,needs_check,city_jock_taxes.csv,Open city page.
+STL,2026-01-01,0.01,0.01,1,duty_day,earnings,in_force,needs_check,city_jock_taxes.csv,Open city page. Blues practice in Maryland Heights (outside the city).
+MDNR,2026-01-01,,0.0225,1,duty_day,special_nonresident_tax,in_force,verified,https://mgaleg.maryland.gov/2022RS/fnotes/bil_0006/sb0736.pdf,"Statewide, in lieu of county tax; residents pay 2.25%-3.30% county tax instead. Missing from old CSV."

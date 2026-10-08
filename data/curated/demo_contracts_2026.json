@@ -1,0 +1,122 @@
+[
+  {
+    "id": "gonzalez-2026",
+    "player": "Christian Gonzalez",
+    "team": "New England Patriots",
+    "team_id": "NFL_NE",
+    "home_state": "MA",
+    "year": 2026,
+    "extension_value": 135000000,
+    "extension_years": 4,
+    "aav": 33750000,
+    "fully_guaranteed": 53928482,
+    "total_guarantees": 102000000,
+    "base_salary": 2259482,
+    "signing_bonus_cash": 33000000,
+    "other_cash": 550000,
+    "annual_cash": 35809482,
+    "cap_charge": 11405458,
+    "cap_bonus_proration": 8595976,
+    "status": "needs_check",
+    "sources": [
+      {
+        "name": "OverTheCap",
+        "url": "https://overthecap.com/player/christian-gonzalez/10841",
+        "scope": "2026 cash, base salary, roster bonus, signing bonus, extension and cap figures"
+      },
+      {
+        "name": "Spotrac",
+        "url": "https://www.spotrac.com/nfl/new-england-patriots/overview",
+        "scope": "2026 cash total and cap hit only",
+        "annual_cash": 35812202,
+        "cap_charge": 11408178
+      }
+    ],
+    "notes": [
+      "OTC base salary + $550,000 roster bonus + $33,000,000 cash signing bonus reconcile to its annual cash total.",
+      "Spotrac reports $2,720 more annual cash and cap hit; the reason has not been verified. OTC narrative cap figure also differs from its table; the table value is retained.",
+      "The signing-bonus three-part tax test is assumed, not established by these sources."
+    ],
+    "accessed_date": "2026-10-07"
+  },
+  {
+    "id": "witherspoon-2026",
+    "player": "Devon Witherspoon",
+    "team": "Seattle Seahawks",
+    "team_id": "NFL_SEA",
+    "home_state": "WA",
+    "year": 2026,
+    "extension_value": 132000000,
+    "extension_years": 4,
+    "aav": 33000000,
+    "fully_guaranteed": 59005702,
+    "total_guarantees": null,
+    "base_salary": 1145000,
+    "signing_bonus_cash": 26000000,
+    "other_cash": 3949702,
+    "annual_cash": 31094702,
+    "cap_charge": 15337639,
+    "cap_bonus_proration": 10242937,
+    "status": "provisional",
+    "sources": [
+      {
+        "name": "OverTheCap",
+        "url": "https://overthecap.com/player/devon-witherspoon/10829",
+        "scope": "2026 compensation breakdown, annual cash and cap figures"
+      },
+      {
+        "name": "Seattle Seahawks",
+        "url": "https://www.seahawks.com/news/seahawks-agree-to-terms-with-cb-devon-witherspoon-on-contract-extension",
+        "scope": "Extension announcement only; annual cash not independently checked"
+      }
+    ],
+    "notes": [
+      "Other cash is the $3,949,702 roster bonus listed by OTC.",
+      "2026 annual cash has one detailed source; Spotrac was inaccessible during this check.",
+      "OTC reports over $101 million total guarantees without an exact figure in its narrative; the exact total is left unknown.",
+      "The signing-bonus three-part tax test is assumed."
+    ],
+    "accessed_date": "2026-10-07"
+  },
+  {
+    "id": "surtain-2026",
+    "player": "Patrick Surtain II",
+    "team": "Denver Broncos",
+    "team_id": "NFL_DEN",
+    "home_state": "CO",
+    "year": 2026,
+    "extension_value": 96000000,
+    "extension_years": 4,
+    "aav": 24000000,
+    "fully_guaranteed": 40688565,
+    "total_guarantees": 77500000,
+    "base_salary": 1215000,
+    "signing_bonus_cash": 0,
+    "other_cash": 21417000,
+    "annual_cash": 22632000,
+    "cap_charge": 12698400,
+    "cap_bonus_proration": null,
+    "status": "needs_check",
+    "sources": [
+      {
+        "name": "OverTheCap",
+        "url": "https://overthecap.com/player/patrick-surtain-ii/9473",
+        "scope": "2026 annual cash and base salary after restructure; extension and cap figures"
+      },
+      {
+        "name": "Spotrac",
+        "url": "https://www.spotrac.com/nfl/denver-broncos/overview",
+        "scope": "2026 cash total and cap hit only",
+        "annual_cash": 22634380,
+        "cap_charge": 12700780
+      }
+    ],
+    "notes": [
+      "Other cash is derived: OTC annual cash minus base salary = $21,417,000. Its option/other-bonus split is not independently verified.",
+      "No new 2026 signing bonus is identified here; prior signing-bonus cap proration is not current cash.",
+      "Other cash is allocated by duty days for this prototype; option-bonus sourcing requires review.",
+      "Spotrac reports $2,380 more cash and cap hit; the reason has not been verified."
+    ],
+    "accessed_date": "2026-10-07"
+  }
+]

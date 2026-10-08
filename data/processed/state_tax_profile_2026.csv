@@ -1,0 +1,52 @@
+state_code,state_name,income_tax_type,taxes_wages,nonresident_rate_method,nonresident_method_status,has_athlete_duty_day_rule,notes
+AL,Alabama,graduated,1,proration,needs_check,0,
+AK,Alaska,none,0,proration,verified,0,
+AZ,Arizona,flat,1,proration,needs_check,1,
+AR,Arkansas,graduated,1,proration,needs_check,0,
+CA,California,graduated,1,proration,verified,0,Top bracket 12.3% + 1% MHST (state_surtaxes). SDI not modeled.
+CO,Colorado,flat,1,proration,needs_check,1,
+CT,Connecticut,graduated,1,proration,needs_check,1,
+DE,Delaware,graduated,1,proration,needs_check,0,
+DC,District of Columbia,graduated,1,proration,needs_check,0,DC cannot tax nonresidents' wages.
+FL,Florida,none,0,proration,verified,0,
+GA,Georgia,flat,1,proration,needs_check,0,"Rate 4.99% per HB 463 (signed 2026-05-11, retroactive to 1/1/2026); TF table shows 5.19%."
+HI,Hawaii,graduated,1,proration,needs_check,0,
+ID,Idaho,flat,1,proration,needs_check,0,
+IL,Illinois,flat,1,proration,needs_check,1,Duty days in statute; 3-part signing-bonus test; no retaliatory clause in current text.
+IN,Indiana,flat,1,proration,needs_check,1,
+IA,Iowa,flat,1,proration,needs_check,1,
+KS,Kansas,graduated,1,proration,needs_check,0,
+KY,Kentucky,flat,1,proration,needs_check,0,
+LA,Louisiana,flat,1,proration,needs_check,1,
+ME,Maine,graduated,1,proration,needs_check,1,
+MD,Maryland,graduated,1,proration,needs_check,1,Visitors also owe a special nonresident tax in lieu of county tax (not in brackets).
+MA,Massachusetts,flat,1,proration,needs_check,1,"5% flat + 4% surtax over $1,107,750 (see state_surtaxes)."
+MI,Michigan,flat,1,proration,needs_check,1,
+MN,Minnesota,graduated,1,proration,needs_check,0,
+MS,Mississippi,flat,1,proration,needs_check,0,
+MO,Missouri,graduated,1,proration,needs_check,1,
+MT,Montana,graduated,1,proration,needs_check,0,
+NE,Nebraska,graduated,1,proration,needs_check,0,
+NV,Nevada,none,0,proration,verified,0,
+NH,New Hampshire,none,0,proration,verified,0,
+NJ,New Jersey,graduated,1,proration,verified,1,
+NM,New Mexico,graduated,1,proration,needs_check,0,
+NY,New York,graduated,1,proration,verified,1,Benefit recapture NOT modeled: engine output is a lower bound for very high earners.
+NC,North Carolina,flat,1,proration,needs_check,1,
+ND,North Dakota,graduated,1,proration,needs_check,0,
+OH,Ohio,flat,1,proration,needs_check,0,
+OK,Oklahoma,graduated,1,proration,needs_check,0,
+OR,Oregon,graduated,1,proration,needs_check,1,
+PA,Pennsylvania,flat,1,proration,needs_check,1,General working-days rule (61 Pa. Code 109.8); not games played.
+RI,Rhode Island,graduated,1,proration,needs_check,1,
+SC,South Carolina,graduated,1,proration,needs_check,0,"Top rate temporarily 6% through 2026-06-30, scheduled to revert to 6.2%. Verify."
+SD,South Dakota,none,0,proration,verified,0,
+TN,Tennessee,none,0,proration,verified,0,
+TX,Texas,none,0,proration,verified,0,
+UT,Utah,flat,1,proration,needs_check,1,
+VT,Vermont,graduated,1,proration,needs_check,0,
+VA,Virginia,graduated,1,proration,needs_check,1,
+WA,Washington,cap_gains_only,0,proration,verified,0,No wage income tax; capital gains only (7%/9%). Capital-gains rates intentionally not loaded.
+WV,West Virginia,graduated,1,proration,needs_check,0,
+WI,Wisconsin,graduated,1,proration,needs_check,1,
+WY,Wyoming,none,0,proration,verified,0,
