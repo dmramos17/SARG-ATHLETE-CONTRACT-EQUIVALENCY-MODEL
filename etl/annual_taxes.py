@@ -1,4 +1,4 @@
-"""2026 employee federal/payroll and selected local tax estimates.
+"""Employee federal/payroll and selected local tax estimates.
 
 Federal assumes wage-only income, standard deduction, no dependents/credits,
 spouse income or AMT. Local wage bases are supplied by the scenario, not inferred
@@ -69,10 +69,10 @@ def estimate_local(tables, resident_city, gross, early_cash, work):
             tax = bracket_tax(list(zip(bounds, [.03078, .03762, .03819, .03876])), base)
             rows.append(dict(locality="NYC", kind="resident", period="Full year", base=base,
                              rate=None, tax=tax, deduction=deduction))
-            sources.append(dict(state="NYC", status="verified", source=NYC_SOURCE))
+            sources.append(dict(state="NYC", status="verified", source="https://www.tax.ny.gov/pdf/2025/inc/it201i_2025.pdf" if tables.year == 2025 else NYC_SOURCE))
         else:
-            for period, base, date in [("Jan–Jun", early_cash, "2026-06-30"),
-                                       ("Jul–Dec", gross - early_cash, "2026-12-31")]:
+            for period, base, date in [("Jan–Jun", early_cash, f"{tables.year}-06-30"),
+                                       ("Jul–Dec", gross - early_cash, f"{tables.year}-12-31")]:
                 resident, _, _, _, status, source = local_rates(tables, resident_city, date)
                 if resident is None:
                     raise ValueError("Resident tax is not supported for this locality.")
@@ -82,8 +82,8 @@ def estimate_local(tables, resident_city, gross, early_cash, work):
     for city, amounts in work.items():
         if city == resident_city:
             continue
-        for key, period, date in [("early", "Jan–Jun", "2026-06-30"),
-                                  ("late", "Jul–Dec", "2026-12-31")]:
+        for key, period, date in [("early", "Jan–Jun", f"{tables.year}-06-30"),
+                                  ("late", "Jul–Dec", f"{tables.year}-12-31")]:
             base = amounts[key]
             if not base:
                 continue

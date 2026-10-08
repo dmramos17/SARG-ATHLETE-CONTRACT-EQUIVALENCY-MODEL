@@ -249,14 +249,26 @@ def bracket_tax(rows, income: float) -> float:
 def resident_tax(t: TaxTables, state: str, income: float) -> float:
     if not t.taxes_wages(state):
         return 0.0
-    return bracket_tax(t.brackets(state), income) + sum(max(0.0, income - th) * r for th, r in t.surtaxes(state))
+    return state_base_tax(t, state, income) + sum(max(0.0, income - th) * r for th, r in t.surtaxes(state))
+
+
+def state_base_tax(t: TaxTables, state: str, income: float) -> float:
+    if t.year == 2025 and state == 'OH':
+        # Ohio's published schedule has base amounts that marginal slices alone
+        # cannot reproduce. See ORC 5747.02(A)(3)(b).
+        if income <= 26_050:
+            return 0.0
+        if income <= 100_000:
+            return 342.0 + (income - 26_050) * .0275
+        return 2394.32 + (income - 100_000) * .03125
+    return bracket_tax(t.brackets(state), income)
 
 
 def nonresident_tax(t: TaxTables, state: str, total_income: float, sourced: float) -> float:
     """Effective-rate method; MA surtax applied only to MA-sourced income above the threshold."""
     if sourced <= 0 or not t.taxes_wages(state) or state == "DC":
         return 0.0
-    base = bracket_tax(t.brackets(state), total_income) * sourced / total_income
+    base = state_base_tax(t, state, total_income) * sourced / total_income
     surtax = sum(max(0.0, sourced - th) * r for th, r in t.surtaxes(state))
     return base + surtax
 

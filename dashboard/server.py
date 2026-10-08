@@ -12,10 +12,14 @@ sys.path.insert(0, str(ROOT))
 from etl.duty_days import CompItem, DutyDayRatios, TaxTables, allocate, estimate_state_local_tax
 from etl.annual_taxes import federal_payroll, estimate_local, FEDERAL_SOURCE, PAYROLL_SOURCES
 from etl.contract_data import load_contracts, sync_contracts
+from etl.estimated_duty_days import estimate_calendar
+from etl.historical_taxes import sync_historical_taxes, FEDERAL_2025_SOURCE
 
 STATES = {"MA": "Massachusetts", "TX": "Texas", "FL": "Florida", "NY": "New York", "NJ": "New Jersey", "CA": "California"}
 STATES.update({"PA": "Pennsylvania", "MI": "Michigan", "OH": "Ohio", "MO": "Missouri", "MD": "Maryland"})
 STATES.update({"WA": "Washington", "CO": "Colorado"})
+STATES.update({"AZ":"Arizona", "GA":"Georgia", "IN":"Indiana", "LA":"Louisiana",
+               "MN":"Minnesota", "NC":"North Carolina", "NV":"Nevada", "TN":"Tennessee", "WI":"Wisconsin"})
 LOCALITIES = {"NYC": ("New York City", "NY"), "PHL": ("Philadelphia", "PA"),
               "DET": ("Detroit", "MI"), "CLE": ("Cleveland", "OH"),
               "CIN": ("Cincinnati", "OH"), "COL": ("Columbus", "OH"),
@@ -24,6 +28,9 @@ LOCALITIES = {"NYC": ("New York City", "NY"), "PHL": ("Philadelphia", "PA"),
 
 
 def calculate(data):
+    year = data.get("tax_year", 2026)
+    if type(year) is not int or year not in (2025, 2026):
+        raise ValueError("Choose tax year 2025 or 2026.")
     residence = data.get("residence")
     if residence not in STATES:
         raise ValueError("Choose one of the supported residence states.")
@@ -54,7 +61,7 @@ def calculate(data):
         raise ValueError("Unsourced days must be whole numbers from 0 to 366.")
     total_days = sum(counts.values()) + int(unsourced)
     if not 1 <= total_days <= 365:
-        raise ValueError("Total 2026 duty days must be between 1 and 365.")
+        raise ValueError(f"Total {year} duty days must be between 1 and 365.")
     treatment = data.get("bonus_treatment", "qualifying")
     if treatment not in ("qualifying", "conditional"):
         raise ValueError("Choose a supported signing-bonus treatment.")
@@ -87,9 +94,12 @@ def calculate(data):
             if state_local_bases[state] > gross:
                 raise ValueError("Combined local wage bases in a state cannot exceed total compensation.")
         normalized_work[locality] = amounts
-    tables = TaxTables(ROOT / "athlete_tax.db", 2026, filing)
+    tables = TaxTables(ROOT / "athlete_tax.db", year, filing)
     try:
-        ratios = DutyDayRatios(2026, total_days, counts, {}, int(unsourced))
+        for state in set(counts) | {residence}:
+            if tables.taxes_wages(state) and not tables.brackets(state):
+                raise ValueError(f"Missing {year} tax brackets for {state}; estimate cannot proceed.")
+        ratios = DutyDayRatios(year, total_days, counts, {}, int(unsourced))
         items = [CompItem("salary", salary), CompItem("roster_bonus", other), CompItem("signing_bonus", bonus,
                  conditioned_on_play=treatment == "conditional")]
         allocation = allocate(items, ratios, tables.bonus_rules())
@@ -102,13 +112,13 @@ def calculate(data):
                  "total_sourced": allocation.sourced.get(s, 0),
                  "nonresident_tax": tax["nonresident"].get(s, 0),
                  "is_residence": s == residence} for s, n in counts.items()]
-        sources = [dict(state="Federal", status="verified", source=FEDERAL_SOURCE)]
+        sources = [dict(state="Federal", status="verified", source=FEDERAL_2025_SOURCE if year == 2025 else FEDERAL_SOURCE)]
         sources += [dict(state="Payroll", status="verified", source=url) for url in PAYROLL_SOURCES]
         sources += local["sources"]
         for state in sorted(set(counts) | {residence}):
             for table in ("state_income_tax_brackets", "state_surtaxes"):
                 query = f"SELECT DISTINCT verification_status, source FROM {table} WHERE tax_year=? AND state_code=?"
-                params = [2026, state]
+                params = [year, state]
                 if table == "state_income_tax_brackets":
                     query += " AND filing_status=?"
                     params.append(filing)
@@ -117,11 +127,13 @@ def calculate(data):
         notes = list(allocation.notes)
         if local["total"]:
             notes.append("Local taxes are before city exemptions, refunds, and cross-jurisdiction credits (including state credits for city tax). These omissions can overstate combined tax.")
-        for state in sorted(set(counts) | {residence}):
+        if year == 2025:
+            notes.append("2025 demo: reported season cash approximates calendar-year wages. State estimates omit deductions, exemptions, benefit recapture and some jurisdiction-specific sourcing/credits; state rows remain provisional. Pittsburgh tax, Indiana county tax, foreign tax and state payroll programs are excluded.")
+        for state in sorted(set(counts) | {residence}) if year == 2026 else []:
             profile = tables.con.execute("SELECT notes FROM state_tax_profile WHERE state_code=?", (state,)).fetchone()
             if profile and profile[0]:
                 notes.append(f"{state}: {profile[0]}")
-        return {"gross": gross, "remaining": gross - combined,
+        return {"tax_year": year, "gross": gross, "remaining": gross - combined,
                 "effective_rate": combined / gross, "total_tax": combined,
                 "tax": tax, "national": national, "local": local,
                 "rows": rows, "total_days": total_days,
@@ -150,7 +162,7 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(404, {"error": "Not found"})
 
     def do_POST(self):
-        if self.path != "/api/calculate":
+        if self.path not in ("/api/calculate", "/api/duty-days"):
             self.respond(404, {"error": "Not found"})
             return
         try:
@@ -160,7 +172,13 @@ class Handler(BaseHTTPRequestHandler):
             data = json.loads(self.rfile.read(length))
             if not isinstance(data, dict):
                 raise ValueError("Expected calculation inputs.")
-            result = calculate(data)
+            if self.path == "/api/duty-days":
+                result = estimate_calendar(data.get("team_id", ""), travel_days=data.get("travel_days",1),
+                                           weekly_off_day=data.get("weekly_off_day",1),
+                                           excluded_dates=data.get("excluded_dates",[]),
+                                           additional_days=data.get("additional_days",[]), overrides=data.get("overrides",{}))
+            else:
+                result = calculate(data)
         except (ValueError, TypeError, OverflowError) as exc:
             self.respond(400, {"error": str(exc)})
             return
@@ -174,5 +192,6 @@ if __name__ == "__main__":
     if not (ROOT / "athlete_tax.db").exists():
         sys.exit("Missing athlete_tax.db. Run python src/athlete_tax/clean_tax_data.py first.")
     sync_contracts()
+    sync_historical_taxes()
     print("Athlete Tax Lab: http://127.0.0.1:8765", flush=True)
     HTTPServer(("127.0.0.1", 8765), Handler).serve_forever()

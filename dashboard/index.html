@@ -9,7 +9,7 @@
 </style>
 </head>
 <body>
-<header><strong>SARG / TAX LAB</strong><span>Research prototype · 2026</span></header>
+<header><strong>SARG / TAX LAB</strong><span>Research prototype · 2025</span></header>
 <main>
 <h1>Follow the money. See the tax.</h1>
 <p class="intro">Explore how compensation, residence, and work location affect an athlete’s estimated federal, payroll, state, and local taxes.</p>
@@ -17,7 +17,7 @@
 <form class="panel" id="inputs">
 <h2>Select a contract</h2>
 <label for="contract">Player</label><select id="contract" disabled><option value="">Loading contracts…</option></select>
-<label for="contractyear">Contract cash year</label><select id="contractyear"><option>2026</option></select>
+<label for="contractyear">Contract cash year</label><select id="contractyear"><option>2025</option></select>
 <p class="help" id="contracterror" role="alert"></p>
 <h3>Reported annual compensation</h3><div id="cashsummary"></div>
 <input id="salary" type="hidden" value="0"><input id="other_cash" type="hidden" value="0"><input id="bonus" type="hidden" value="0">
@@ -29,10 +29,17 @@
 <label for="filing">Filing status</label><select id="filing"><option value="single">Single</option><option value="mfj">Married filing jointly</option></select>
 <label for="bonus_treatment">Signing-bonus treatment</label><select id="bonus_treatment"><option value="qualifying">Assume qualifying residence-only bonus</option><option value="conditional">Bonus conditioned on playing</option></select>
 <p class="help">Qualifying assumes nonrefundable payment, paid separately, with no playing condition. California’s refundable portion is assumed $0 in this mode.</p>
+<h3>Estimated duty-day model</h3>
+<label for="travel-days">Arrival / preparation days before away games</label><select id="travel-days"><option value="0">0 days</option><option value="1" selected>1 day</option><option value="2">2 days</option><option value="3">3 days</option></select>
+<label for="off-day">Assumed weekly off day</label><select id="off-day"><option value="1">Tuesday</option><option value="0">Monday</option><option value="2">Wednesday</option><option value="3">Thursday</option><option value="4">Friday</option><option value="5">Saturday</option><option value="6">Sunday</option><option value="-1">None (every service-window day)</option></select>
+<label for="excluded-dates">Exclude dates without team service</label><input id="excluded-dates" placeholder="2025-08-01, 2025-11-25"><p class="help">Use comma-separated YYYY-MM-DD dates. Inactive players may still travel or rehabilitate with the team.</p>
+<label for="additional-dates">Add offseason service dates</label><input id="additional-dates" placeholder="2025-06-10, 2025-06-11">
+<label for="location-overrides">Correct duty-day locations</label><input id="location-overrides" placeholder="2025-09-14=WA, 2025-10-11=FOREIGN"><p class="help">Use date=state pairs; FOREIGN means no US state allocation. Changes are labeled user assumptions.</p>
+<button type="button" id="rebuild-days" class="calculate">Rebuild calendar & update taxes</button><p class="help" id="calendar-error" role="alert"></p>
 <h3>Duty days by work state</h3>
 <div class="days" id="days"></div>
 <label for="unsourced">Days with no sourced team event</label><input id="unsourced" type="number" min="0" max="365" step="1" value="0" required>
-<p class="help">These days stay in the denominator. The default assumes 164 duty days, all in the team’s home state. It is not an actual travel schedule.</p>
+<p class="help">International service days remain in the denominator. State totals below come from the estimated calendar; manual edits override totals only and do not update calendar rows or local wage bases.</p>
 <details style="margin-top:22px" open><summary>Local taxes & payment timing</summary>
 <label for="resident_city">Assumed full-year residence city</label><select id="resident_city"><option value="">No modeled residence-city tax</option></select>
 <label for="early_cash">Total cash paid Jan 1–Jun 30 ($)</label><input id="early_cash" type="number" min="0" step="any" value="0" required>
@@ -40,7 +47,7 @@
 <details><summary>Taxable compensation earned in other cities</summary>
 <p class="help">Enter the compensation subject to each local tax, including any taxable bonus. These amounts are subsets of your total cash, not extra earnings. Use (salary + other service cash) × city duty days ÷ total duty days as a starting estimate; local bonus rules need separate review. Add work-state duty days above. Residence-city tax is calculated separately; amounts entered for that city are ignored.</p>
 <div id="localinputs"></div></details>
-<p class="help">Only the listed localities are modeled. Blank inputs assume $0 local taxable compensation. Maryland residents’ county taxes and Pittsburgh are not included.</p>
+<p class="help">Only the listed localities are modeled. The calendar preloads supported city-game wage bases. Blank inputs assume $0 local taxable compensation. 2025 rates are currently loaded for Philadelphia, Cincinnati, Kansas City, and Maryland nonresident tax. Maryland residents’ county taxes and Pittsburgh are not included.</p>
 </details>
 <button class="calculate" id="submit" type="submit">Update tax estimate →</button>
 </details>
@@ -50,18 +57,19 @@
 <div class="metrics">
 <div class="metric primary"><p>Cash remaining after estimated taxes</p><strong id="remaining">—</strong><small>Federal + employee payroll + state + selected local taxes</small><div class="bar"><span id="taxbar" style="width:0"></span></div><div class="legend"><span id="rate">—</span><span id="gross">—</span></div></div>
 <div class="metric"><p>Total estimated taxes</p><strong id="total">—</strong><small>Across the modeled tax categories</small></div>
-<div class="metric"><p>Total duty days</p><strong id="totaldays">—</strong><small>Within calendar year 2026</small></div>
+<div class="metric"><p>Total duty days</p><strong id="totaldays">—</strong><small>Within calendar year 2025</small></div>
 </div>
 <div class="panel"><h2>Your tax breakdown</h2><div id="breakdown"></div></div>
 <div class="notice">Illustrative research estimate. Federal uses the standard deduction and assumes wage-only income, no spouse income, tax credits, or AMT. Payroll includes employee Social Security and Medicare; state payroll programs are excluded. State and local estimates use simplified sourcing and credits. City exemptions, refunds, and credits are excluded. Some tax inputs still need verification. Results describe the selected assumptions; changing residence alone does not establish legal residency.</div>
+<details class="panel" id="duty-details"><summary>Explore estimated 2025 duty days</summary><p class="help" id="duty-summary"></p><div class="scroll"><table><thead><tr><th>State / jurisdiction</th><th>Days</th><th>Share</th></tr></thead><tbody id="duty-state-rows"></tbody></table></div><div id="duty-notes" class="help"></div><button type="button" id="export-days">Download calendar CSV</button><details><summary>Daily calendar & evidence</summary><div class="scroll" style="max-height:420px"><table><thead><tr><th>Date</th><th>Event</th><th>State / city</th><th>Evidence</th></tr></thead><tbody id="duty-calendar"></tbody></table></div></details><details><summary>Schedule sources</summary><div id="duty-sources" class="help"></div></details></details>
 <details class="panel"><summary>Show the calculation</summary><p class="formula">State-sourced service cash = (salary + other cash) × state duty days ÷ total duty days<br>Total state tax = residence-state tax − resident credit + taxes owed to other states<br>Total estimated tax = federal income tax + employee payroll + state tax + modeled local tax</p><h3>Federal income tax</h3><p class="help" id="federalbase"></p><div class="scroll"><table><thead><tr><th>Bracket starts at</th><th>Marginal rate</th><th>Income in bracket</th><th>Tax</th></tr></thead><tbody id="federalrows"></tbody></table></div><h3>Employee payroll taxes</h3><p class="help" id="payrollformula"></p><h3>State income allocation</h3><div class="scroll"><table><thead><tr><th>Work state</th><th>Days / share</th><th>Salary sourced</th><th>Total sourced</th><th>Visitor tax</th></tr></thead><tbody id="allocation"></tbody></table></div><p class="help" id="residenceonly"></p><p class="help">Residence-state tax is calculated on all compensation. “Visitor tax” applies to other work states. Signing-bonus sourcing follows the existing model’s state rules. State signing-bonus rules do not determine local tax treatment. Local taxable compensation is entered separately.</p><h3>Local tax calculation</h3><div class="scroll"><table><thead><tr><th>Locality / status</th><th>Payment period</th><th>Taxable base</th><th>Rate</th><th>Tax</th></tr></thead><tbody id="localrows"></tbody></table></div><p class="help">NYC uses progressive resident brackets and the NY standard deduction (no dependents assumed). Other residence cities apply their resident rate to all cash. City credits and exemptions are excluded; entering a residence city assumes full-year residency.</p><div id="notes" class="help"></div></details>
 <details class="panel"><summary>Tax data sources & verification</summary><div id="sources"></div><p class="help">Status labels come from the project database. A verified row does not validate the full scenario or calculation method.</p></details>
 </section>
 </div><footer>Salima & Dayana · Athlete Contract Equivalency Model · Annual tax demonstration</footer>
 </main>
 <script>
-const states={MA:'Massachusetts',TX:'Texas',FL:'Florida',NY:'New York',NJ:'New Jersey',CA:'California',PA:'Pennsylvania',MI:'Michigan',OH:'Ohio',MO:'Missouri',MD:'Maryland',WA:'Washington',CO:'Colorado'};
-const localities={NYC:['New York City','NY'],PHL:['Philadelphia','PA'],DET:['Detroit','MI'],CLE:['Cleveland','OH'],CIN:['Cincinnati','OH'],COL:['Columbus','OH'],KCM:['Kansas City','MO'],STL:['St. Louis','MO'],MDNR:['Maryland special nonresident tax','MD']};
+const states={MA:'Massachusetts',TX:'Texas',FL:'Florida',NY:'New York',NJ:'New Jersey',CA:'California',PA:'Pennsylvania',MI:'Michigan',OH:'Ohio',MO:'Missouri',MD:'Maryland',WA:'Washington',CO:'Colorado',AZ:'Arizona',GA:'Georgia',IN:'Indiana',LA:'Louisiana',MN:'Minnesota',NC:'North Carolina',NV:'Nevada',TN:'Tennessee',WI:'Wisconsin'};
+const localities={NYC:['New York City','NY'],PHL:['Philadelphia','PA'],CIN:['Cincinnati','OH'],KCM:['Kansas City','MO'],MDNR:['Maryland special nonresident tax','MD']};
 const $=id=>document.getElementById(id);
 const money=v=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(v);
 const percent=(v,digits=2)=>(v*100).toFixed(digits)+'%';
@@ -85,11 +93,11 @@ function residenceCities(){
 }
 $('residence').addEventListener('change',residenceCities);residenceCities();
 function text(parent,tag,value){const el=document.createElement(tag);el.textContent=value;parent.append(el);return el;}
-function sourceRow(s){const p=text($('sources'),'p',s.state+' · '+s.status.replaceAll('_',' ')+' — ');if(/^https:\/\//.test(s.source)){const a=text(p,'a','Official source');a.href=s.source;a.target='_blank';a.rel='noopener noreferrer';}else p.append(document.createTextNode(s.source));}
+function sourceRow(s){const p=text($('sources'),'p',s.state+' · '+s.status.replaceAll('_',' ')+' — ');if(/^https:\/\//.test(s.source)){const a=text(p,'a','Source');a.href=s.source;a.target='_blank';a.rel='noopener noreferrer';}else p.append(document.createTextNode(s.source));}
 function line(label,value){const row=document.createElement('div');row.className='line';text(row,'span',label);text(row,'span',money(value));$('breakdown').append(row);}
 async function calculate(){
  $('error').textContent='';$('submit').disabled=true;$('results').setAttribute('aria-busy','true');
- const data={salary:Number($('salary').value),bonus:Number($('bonus').value),other_cash:Number($('other_cash').value),residence:$('residence').value,filing:$('filing').value,bonus_treatment:$('bonus_treatment').value,unsourced:Number($('unsourced').value),resident_city:$('resident_city').value,early_cash:Number($('early_cash').value),local_work:Object.fromEntries(Object.keys(localities).map(c=>[c,{early:Number($('local-'+c+'-early').value),late:Number($('local-'+c+'-late').value)}])),days:Object.fromEntries(Object.keys(states).map(s=>[s,Number($('days-'+s).value)]))};
+ const data={tax_year:2025,salary:Number($('salary').value),bonus:Number($('bonus').value),other_cash:Number($('other_cash').value),residence:$('residence').value,filing:$('filing').value,bonus_treatment:$('bonus_treatment').value,unsourced:Number($('unsourced').value),resident_city:$('resident_city').value,early_cash:Number($('early_cash').value),local_work:Object.fromEntries(Object.keys(localities).map(c=>[c,{early:Number($('local-'+c+'-early').value),late:Number($('local-'+c+'-late').value)}])),days:Object.fromEntries(Object.keys(states).map(s=>[s,Number($('days-'+s).value)]))};
  try{
  const response=await fetch('/api/calculate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});const out=await response.json();if(!response.ok)throw new Error(out.error);
  $('assumption-summary').textContent='Estimate assumes '+states[data.residence]+' residence, '+out.total_days+' duty days, '+(data.filing==='single'?'single':'married filing jointly')+' filing, and the selected bonus and local tax treatment. These assumptions are not verified player facts.';
@@ -110,24 +118,46 @@ let contracts=[];
 function resetLocal(){ $('early_cash').value=0;residenceCities();$('resident_city').value='';Object.keys(localities).forEach(c=>['early','late'].forEach(k=>$('local-'+c+'-'+k).value=0));}
 async function fetchContracts(){try{const response=await fetch('/api/contracts');if(!response.ok)throw new Error('Contract library unavailable.');contracts=await response.json();if(!contracts.length)throw new Error('No sourced contracts are available.');$('contract').replaceChildren();for(const row of contracts){const option=document.createElement('option');option.value=row.id;option.textContent=row.player+' · '+row.team; $('contract').append(option);} $('contract').disabled=false;loadContract();}catch(error){$('contracterror').textContent=error.message;$('remaining').textContent='Unavailable';$('results').setAttribute('aria-busy','false');}}
 $('contract').addEventListener('change',loadContract);
-function loadContract(){
+async function loadContract(){
  const row=contracts.find(c=>c.id===$('contract').value);if(!row)return;
  $('salary').value=row.base_salary;$('other_cash').value=row.other_cash;$('bonus').value=row.signing_bonus_cash;
  $('residence').value=row.home_state;$('bonus_treatment').value='qualifying';$('unsourced').value=0;
- Object.keys(states).forEach(s=>$('days-'+s).value=s===row.home_state?164:0);resetLocal();
+ Object.keys(states).forEach(s=>$('days-'+s).value=0);resetLocal();$('travel-days').value=1;$('off-day').value=1;for(const id of ['excluded-dates','additional-dates','location-overrides'])$(id).value='';
  $('cashsummary').replaceChildren();for(const [label,value] of [['Base salary',row.base_salary],['Cash signing bonus',row.signing_bonus_cash],['Other cash compensation',row.other_cash],['Total annual cash',row.annual_cash]]){const div=document.createElement('div');div.className='line';text(div,'span',label);text(div,'span',money(value));$('cashsummary').append(div);}
- $('assumption-summary').textContent='Assumed residence: '+states[row.home_state]+'. 164 home-state duty days; single-year estimate. Adjust assumptions below to reflect another tax situation.';
+ $('assumption-summary').textContent='Assumed residence: '+states[row.home_state]+'. Duty days estimated from the 2025 team calendar.';
  $('assumptions').open=false;
- $('contractinfo').replaceChildren();text($('contractinfo'),'p',row.player+' · '+row.team+' · 2026');
+ $('contractinfo').replaceChildren();text($('contractinfo'),'p',row.player+' · '+row.team+' · '+row.year);
  text($('contractinfo'),'p','Reported annual cash: '+money(row.annual_cash)+' = '+money(row.base_salary)+' base + '+money(row.signing_bonus_cash)+' signing bonus + '+money(row.other_cash)+' other cash.');
- text($('contractinfo'),'p','Extension: '+money(row.extension_value)+' / '+row.extension_years+' new years; '+money(row.aav)+' average. Fully guaranteed at signing: '+money(row.fully_guaranteed)+'.');
+ text($('contractinfo'),'p','Reported contract: '+money(row.extension_value)+' / '+row.extension_years+' new years; '+money(row.aav)+' average. Fully guaranteed at signing: '+money(row.fully_guaranteed)+'.');
  text($('contractinfo'),'p','Salary-cap charge: '+money(row.cap_charge)+(row.cap_bonus_proration===null?'':'; cap bonus proration: '+money(row.cap_bonus_proration))+'. Cap figures are context only and are not added to taxable cash.');
  text($('contractinfo'),'p','Checked '+row.accessed_date+' · '+row.status.replaceAll('_',' ')+'. This is a saved research snapshot, not a live feed.');
  row.notes.forEach(note=>text($('contractinfo'),'p',note));
  for(const source of row.sources){const p=text($('contractinfo'),'p','');const a=text(p,'a',source.name);a.href=source.url;a.target='_blank';a.rel='noopener noreferrer';p.append(document.createTextNode(' — '+source.scope+(source.annual_cash?' (cash '+money(source.annual_cash)+', cap '+money(source.cap_charge)+')':'')));}
  text($('contractinfo'),'p','Compensation is fixed to this sourced snapshot. Tax assumptions can be adjusted separately.');
- $('contractdetails').hidden=false;$('contractdetails').open=false;calculate();
+ $('contractdetails').hidden=false;$('contractdetails').open=false;await rebuildDays();
 }
+let dutyModel=null, calendarRequest=0;
+const splitDates=id=>$(id).value.split(',').map(x=>x.trim()).filter(Boolean);
+async function rebuildDays(){
+ const row=contracts.find(c=>c.id===$('contract').value);if(!row)return;
+ const request=++calendarRequest;dutyModel=null;$('export-days').disabled=true;$('calendar-error').textContent='';$('rebuild-days').disabled=true;$('submit').disabled=true;
+ try{
+ const overrides={};for(const pair of splitDates('location-overrides')){const parts=pair.split('=').map(x=>x.trim());if(parts.length!==2||!parts[1])throw new Error('Use date=state for location corrections.');overrides[parts[0]]=parts[1].toUpperCase()==='FOREIGN'?null:parts[1].toUpperCase();}
+ const response=await fetch('/api/duty-days',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({team_id:row.team_id,travel_days:Number($('travel-days').value),weekly_off_day:Number($('off-day').value),excluded_dates:splitDates('excluded-dates'),additional_days:splitDates('additional-dates'),overrides})});const out=await response.json();if(!response.ok)throw new Error(out.error);if(request!==calendarRequest)return;dutyModel=out;$('export-days').disabled=false;
+ Object.keys(states).forEach(state=>$('days-'+state).value=out.state_days[state]||0);$('unsourced').value=out.unsourced_days;resetLocal();
+ // Service compensation is assumed paid Jul–Dec; local work bases count city game venues only.
+ const service=row.base_salary+row.other_cash;for(const [city,count] of Object.entries(out.locality_days)){if(localities[city])$('local-'+city+'-late').value=(service*count/out.total_days).toFixed(2);}
+ $('duty-summary').textContent=out.total_days+' estimated days: '+(out.evidence_counts['documented team event']||0)+' documented team events, '+(out.total_days-(out.evidence_counts['documented team event']||0))+' modeled or adjusted days. Team events do not establish individual attendance.';
+ $('duty-state-rows').replaceChildren();for(const [state,count] of [...Object.entries(out.state_days),...(out.unsourced_days?[['International / no US state',out.unsourced_days]]:[])]){const tr=document.createElement('tr');[state,count,percent(count/out.total_days)].forEach(v=>text(tr,'td',v));$('duty-state-rows').append(tr);}
+ $('duty-calendar').replaceChildren();for(const day of out.calendar){const tr=document.createElement('tr');[day.date,day.event,(day.state||'Foreign')+(day.locality?' / '+day.locality:''),day.evidence].forEach(v=>text(tr,'td',v));tr.title=day.note;$('duty-calendar').append(tr);}
+ $('duty-notes').replaceChildren();out.notes.forEach(note=>text($('duty-notes'),'p',note));text($('duty-notes'),'p','Local wage bases use city game days only and assume service cash is paid July–December. Pittsburgh and Indiana county tax are omitted; unknown hotel locations may add local exposure. Rebuilding replaces manual state totals, payment timing, and local wage bases.');
+ $('duty-sources').replaceChildren();for(const url of out.sources){const p=text($('duty-sources'),'p','');const a=text(p,'a',new URL(url).hostname);a.href=url;a.target='_blank';a.rel='noopener noreferrer';}
+ await calculate();
+ }catch(error){if(request===calendarRequest){$('calendar-error').textContent=error.message;$('remaining').textContent='Unavailable';$('total').textContent='—';$('totaldays').textContent='—';}}
+ finally{if(request===calendarRequest){$('rebuild-days').disabled=false;$('submit').disabled=false;}}
+}
+$('rebuild-days').addEventListener('click',rebuildDays);
+$('export-days').addEventListener('click',()=>{if(!dutyModel)return;const fields=['date','event','state','locality','evidence','source','note'];const escape=value=>'"'+String(value??'').replaceAll('"','""')+'"';const csv=[fields,...dutyModel.calendar.map(row=>fields.map(key=>row[key]))].map(row=>row.map(escape).join(',')).join('\r\n');const url=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));const a=document.createElement('a');a.href=url;a.download=dutyModel.team_id+'-estimated-duty-days-2025.csv';a.click();URL.revokeObjectURL(url);});
 fetchContracts();
 $('inputs').addEventListener('submit',event=>{event.preventDefault();calculate();});
 $('assumptions').addEventListener('input',()=>{$('assumption-summary').textContent='Assumptions changed. Click Update tax estimate to apply them.';});

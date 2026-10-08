@@ -1,0 +1,101 @@
+[
+  {
+    "id": "gonzalez-2025",
+    "player": "Christian Gonzalez",
+    "team": "New England Patriots",
+    "team_id": "NFL_NE",
+    "home_state": "MA",
+    "year": 2025,
+    "extension_value": 15102868,
+    "extension_years": 4,
+    "aav": 3775717,
+    "fully_guaranteed": 15102868,
+    "total_guarantees": null,
+    "base_salary": 1447988,
+    "signing_bonus_cash": 0,
+    "other_cash": 675000,
+    "annual_cash": 2122988,
+    "cap_charge": 4118964,
+    "cap_bonus_proration": null,
+    "status": "provisional",
+    "sources": [
+      {
+        "name": "OverTheCap",
+        "url": "https://overthecap.com/player/christian-gonzalez/10841",
+        "scope": "2025 Season History: base salary, annual cash and cap charge"
+      }
+    ],
+    "notes": [
+      "Reported season cash is a proxy for calendar-year wages; actual W-2 payment timing, incentives and postseason pay are not available.",
+      "Other cash is modeled as service compensation allocated by duty days. Option/roster bonus sourcing needs individual review.",
+      "Prior signing-bonus cap proration is not new cash."
+    ],
+    "accessed_date": "2026-10-08"
+  },
+  {
+    "id": "witherspoon-2025",
+    "player": "Devon Witherspoon",
+    "team": "Seattle Seahawks",
+    "team_id": "NFL_SEA",
+    "home_state": "WA",
+    "year": 2025,
+    "extension_value": 31861152,
+    "extension_years": 4,
+    "aav": 7965288,
+    "fully_guaranteed": 31861152,
+    "total_guarantees": null,
+    "base_salary": 1030000,
+    "signing_bonus_cash": 0,
+    "other_cash": 2616468,
+    "annual_cash": 3646468,
+    "cap_charge": 8689405,
+    "cap_bonus_proration": null,
+    "status": "provisional",
+    "sources": [
+      {
+        "name": "OverTheCap",
+        "url": "https://overthecap.com/player/devon-witherspoon/10829",
+        "scope": "2025 Season History: base salary, annual cash and cap charge"
+      }
+    ],
+    "notes": [
+      "Reported season cash is a proxy for calendar-year wages; actual W-2 payment timing, incentives and postseason pay are not available.",
+      "Other cash is modeled as service compensation allocated by duty days. Option/roster bonus sourcing needs individual review.",
+      "Prior signing-bonus cap proration is not new cash."
+    ],
+    "accessed_date": "2026-10-08"
+  },
+  {
+    "id": "surtain-2025",
+    "player": "Patrick Surtain II",
+    "team": "Denver Broncos",
+    "team_id": "NFL_DEN",
+    "home_state": "CO",
+    "year": 2025,
+    "extension_value": 96000000,
+    "extension_years": 4,
+    "aav": 24000000,
+    "fully_guaranteed": 40688565,
+    "total_guarantees": 77500000,
+    "base_salary": 1170000,
+    "signing_bonus_cash": 0,
+    "other_cash": 21000000,
+    "annual_cash": 22170000,
+    "cap_charge": 8370000,
+    "cap_bonus_proration": null,
+    "status": "provisional",
+    "sources": [
+      {
+        "name": "OverTheCap",
+        "url": "https://overthecap.com/player/patrick-surtain-ii/9473",
+        "scope": "2025 Season History: base salary, annual cash and cap charge"
+      }
+    ],
+    "notes": [
+      "Reported season cash is a proxy for calendar-year wages; actual W-2 payment timing, incentives and postseason pay are not available.",
+      "Other cash is modeled as service compensation allocated by duty days. Option/roster bonus sourcing needs individual review.",
+      "Prior signing-bonus cap proration is not new cash."
+    ],
+    "accessed_date": "2026-10-08"
+  }
+]

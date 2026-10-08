@@ -4,7 +4,7 @@ import sqlite3
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA = ROOT / "data/curated/demo_contracts_2026.json"
+DATA = ROOT / "data/curated/demo_contracts_2025.json"
 
 
 def load_contracts(path=DATA):

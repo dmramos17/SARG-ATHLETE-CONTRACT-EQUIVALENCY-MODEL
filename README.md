@@ -27,83 +27,90 @@ athlete_tax.db is generated: keep it in .gitignore.
 
 ## Local browser dashboard (no Streamlit)
 
-From the repository root, run:
-
 ```sh
+python3 src/athlete_tax/clean_tax_data.py  # initial database, requires pandas
 python3 dashboard/server.py
 ```
 
-Open http://127.0.0.1:8765 in your browser. Stop the server with Ctrl+C.
-The dashboard uses Python's standard library, `etl/duty_days.py`, and
-`etl/annual_taxes.py`; it needs no frontend packages. If the database is missing, generate it
-with `python3 src/athlete_tax/clean_tax_data.py` (requires pandas).
+Open [Athlete Tax Lab](http://127.0.0.1:8765/). The dashboard is a local HTML/JavaScript
+interface with a Python standard-library server. It defaults to **2025** cash
+snapshots for Christian Gonzalez, Devon Witherspoon and Patrick Surtain II.
+Reported annual cash is $2,122,988, $3,646,468 and $22,170,000 respectively,
+from OverTheCap season history. These are reported season cash totals, not verified
+calendar-year W-2 wages. Payment timing, incentives and postseason earnings need
+player-level records. Prior signing/option bonus cap proration is excluded from cash.
+The original 2026 snapshots remain available in the repository for earlier analysis.
 
-Choose an existing player contract to load sourced, read-only compensation and
-its tax estimate automatically. Expand **Adjust assumptions** to change residence,
-filing status, bonus treatment, duty days, or local taxes, then update the estimate. The calculation
-panel shows income allocation, and the sources panel exposes database verification
-labels. Supported states: MA, TX, FL, NY, NJ, CA, PA, MI, OH, MO, MD.
+### Estimated duty-day calendar
 
-This is a **2026 annual-tax research preview**. Federal tax applies progressive
-brackets after the federal standard deduction. Employee payroll includes Social
-Security (6.2% up to $184,500), Medicare (1.45% of all wages), and Additional
-Medicare (0.9% above $200,000 single / $250,000 joint). Salary and cash signing
-bonuses are assumed wage income, with no other income, spouse income, pre-tax
-contributions, federal credits, itemized deductions, or AMT. Employer taxes and
-state payroll programs (such as California SDI) are excluded.
+`etl/estimated_duty_days.py` constructs a unique date-by-date **calendar-year 2025**
+team service estimate. It includes January 2025 games from the 2024 season,
+2025 preseason, documented out-of-state joint practices, and the period from
+training camp through December 31. January 2026 is excluded. Default counts are
+144 days for NE, 144 for SEA and 150 for DEN. These are model outputs, not actual
+player duty-day totals or confidence intervals.
 
-Under **Adjust assumptions**, select a full-year residence city to model NYC progressive tax or resident rates
-in Philadelphia, Detroit, Cleveland, Cincinnati, Columbus, Kansas City, or
-St. Louis. For nonresident local work, enter taxable compensation by city and
-payment half-year separately, including any taxable bonuses. NYC does not tax
-nonresident wages. Maryland's special nonresident tax is available separately;
-Maryland residents' county taxes and Pittsburgh are not modeled. Philadelphia
-rates change July 1: Jan–Jun uses 3.74% resident / 3.43% nonresident, Jul–Dec uses
-3.735% / 3.425%. Cash paid before July 1 controls the resident calculation.
-Local tax bases are user assumptions; state bonus sourcing does not establish
-city bonus sourcing. City credits, exemptions, refunds, and state credits for
-city taxes are excluded and can cause overestimates. Blank local inputs mean
-no modeled local tax, not a finding that the athlete owes none.
+- Actual game dates and venue jurisdictions come from the saved NFL schedule
+  subset in `data/curated/nfl_games_calendar_2025.json`, with source URLs.
+  Regular/postseason dates come from the public nflverse dataset; preseason dates
+  come from team publications. The Denver–Jets London venue is explicitly corrected
+  rather than assigning it to New Jersey.
+- Other service-window dates assume practice, meetings or team-facility work in
+  the team's practice state. Tuesday is assumed off, unless a game, joint practice
+  or modeled travel/preparation event takes precedence.
+- Away games assume one destination service day before the game. This does not
+  establish the actual itinerary or each state's treatment of travel days.
+- Full-year residence defaults to the team practice state. It remains editable
+  and is not a claim about actual player domicile.
+- Offseason workouts/minicamps are omitted unless added. Bye-week service and
+  injury rehabilitation remain assumptions. Inactive games do not automatically
+  remove duty days; use individual travel/rehab evidence to correct locations.
+- Foreign duty remains in the denominator without a US state allocation. Foreign
+  income tax, tax treaties and federal foreign-tax credits are not modeled.
 
-State nonresident rates and resident credits retain the existing simplified
-methods; state deductions and NY high-income benefit recapture are excluded.
-Preset cash and travel inputs are assumptions, not verified contract or schedule data.
-Qualifying-bonus mode assumes no refundable portion in California. The server
-binds to localhost for a local demonstration; it is not a production deployment.
+Expand **Adjust assumptions** to choose 0–3 arrival days, select a weekly off day,
+exclude dates, add offseason service dates, or correct a date's work state
+(`2025-09-14=WA`; `FOREIGN` for no US state allocation). Click **Rebuild calendar &
+update taxes**. Rebuilding replaces manual state totals and local wage bases.
+The **Explore estimated 2025 duty days** panel distinguishes documented team events
+from modeled dates and user adjustments. Download its calendar as CSV for review.
+Manual state-day edits change the tax estimate only, not the daily calendar.
 
-Federal/payroll sources: [IRS 2026 brackets](https://www.irs.gov/newsroom/irs-releases-tax-inflation-adjustments-for-tax-year-2026-including-amendments-from-the-one-big-beautiful-bill),
-[SSA wage base](https://www.ssa.gov/oact/cola/cbb.html),
-[IRS payroll rates](https://www.irs.gov/taxtopics/tc751), and
-[Additional Medicare](https://www.irs.gov/taxtopics/tc560).
-NYC brackets and standard deductions: [2026 NY estimated-tax instructions](https://www.tax.ny.gov/pdf/current_forms/it/it2105i.pdf).
-Local rates otherwise come from the existing database with their verification
-labels; Philadelphia's rates were checked against its official
-[Wage Tax page](https://www.phila.gov/services/business-self-employment/business-taxes/wage-tax-employers/).
+### Tax calculation and limits
 
-## Sourced player contract examples
+The demo uses 2025 federal brackets, the updated $15,750 single / $31,500 joint
+standard deduction, and the $176,100 Social Security wage base. Employee Medicare
+and Additional Medicare use annual wages. Wage-only income, no spouse income,
+itemizing, credits or AMT are assumed. Employer taxes and state payroll programs
+are excluded. Sources: [IRS 2025 instructions](https://www.irs.gov/instructions/i1040gi),
+[SSA wage bases](https://www.ssa.gov/oact/cola/cbb.html),
+[IRS payroll](https://www.irs.gov/taxtopics/tc751).
 
-The dashboard's **Player** selector includes 2026 cash snapshots
-for Christian Gonzalez, Devon Witherspoon, and Patrick Surtain II. Choose a player to load the estimate automatically. The compensation summary
-shows base salary, cash signing bonus,
-and other cash compensation; cap charges and bonus proration are shown only as
-context and do not enter the tax base. Other cash follows duty-day sourcing as a
-prototype assumption; Surtain's option/other-bonus classification needs review.
+2025 state brackets are saved separately in
+`data/processed/state_income_tax_brackets_2025.csv`; they are never relabeled 2026
+rows. The published Tax Foundation 2025 table is retained in
+`data/raw/historical/state_tax_table_2025.html`. Explicit historical corrections
+use California FTB, Maryland Comptroller, Ohio statute and Wisconsin DOR sources
+listed on each row. MA's $1,083,150 surtax threshold and California's fixed $1M
+mental-health threshold are separate sourced inputs. Some uncorrected published
+brackets remain provisional; the source table notes prior-year inflation bounds
+for certain states. State deductions/exemptions, NY benefit recapture and detailed
+resident credits/sourcing are omitted. These are research estimates, not tax returns.
 
-Loading resets the hypothetical scenario to 164 home-state duty days and assumes
-residence in that state. This is not a player's actual residence or travel
-schedule. Local tax inputs and payment timing reset to zero; review those inputs
-before interpreting the calculation. Filing status remains the user's selection.
+The calendar preloads local wage bases only for documented city game venues;
+it does not assume hotels are in the stadium city. 2025 local rates are loaded for
+Philadelphia (3.44% visitor Jan–Jun, 3.43% Jul–Dec), Cincinnati (1.8%), Kansas City
+(1%) and Maryland special nonresident tax (2.25%). Service cash is assumed paid
+July–December until timing is edited. City credits/exemptions, Pittsburgh's
+2025 litigation-dependent treatment, Indiana county taxes and other unsupported
+local jurisdictions are omitted, not treated as verified exemptions. An unsupported
+local rate produces an error when selected. The omissions can move estimated tax
+in either direction. Local rates and athlete-specific taxable bases remain provisional.
 
-The reviewed source file is `data/curated/demo_contracts_2026.json`, dated
-October 7, 2026. Each record retains source URLs, scope, discrepancy notes, and
-verification status. OverTheCap supplies the component breakdowns. Spotrac
-team pages report slightly different cash/cap totals for Gonzalez and Surtain;
-both observations are retained, with OTC cash used for the default inputs.
-Witherspoon's annual cash lacks a second detailed source; the Seahawks link
-corroborates the extension announcement only. No record is labeled fully verified.
+`etl/historical_taxes.py` installs the saved 2025 inputs when the server starts.
+`etl/contract_data.py` syncs reviewed cash snapshots into SQLite. No live scraper
+or paid data subscription is required to run the saved demonstration.
 
-On server startup, `etl/contract_data.py` saves these records into SQLite's
-`research_contract_snapshots` table. To refresh those rows after editing the
-curated file, run `python3 -m etl.contract_data`. The selector reads the curated
-file, so it remains reproducible after rebuilding the generated database.
-These are reviewed snapshots, not an automatic web scraper or a live API feed.
+```sh
+python3 -m unittest discover -s tests
+```

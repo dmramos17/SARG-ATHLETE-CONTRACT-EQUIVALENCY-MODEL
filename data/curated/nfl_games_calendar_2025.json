@@ -1,0 +1,612 @@
+[
+  {
+    "date": "2025-01-05",
+    "home": "NE",
+    "away": "BUF",
+    "stage": "REG",
+    "state": "MA",
+    "locality": null,
+    "venue": "Gillette Stadium",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-01-05",
+    "home": "DEN",
+    "away": "KC",
+    "stage": "REG",
+    "state": "CO",
+    "locality": null,
+    "venue": "Empower Field at Mile High",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-01-05",
+    "home": "LAR",
+    "away": "SEA",
+    "stage": "REG",
+    "state": "CA",
+    "locality": null,
+    "venue": "SoFi Stadium",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-01-12",
+    "home": "BUF",
+    "away": "DEN",
+    "stage": "WC",
+    "state": "NY",
+    "locality": null,
+    "venue": "New Era Field",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-08-07",
+    "home": "SEA",
+    "away": "LV",
+    "stage": "PRE",
+    "state": "WA",
+    "locality": null,
+    "venue": "Seattle",
+    "source": "https://static.www.nfl.com/image/upload/league/apps/league-site/media-guides/2025/SEA.pdf"
+  },
+  {
+    "date": "2025-08-08",
+    "home": "NE",
+    "away": "WAS",
+    "stage": "PRE",
+    "state": "MA",
+    "locality": null,
+    "venue": "Foxborough",
+    "source": "https://media.patriots.1rmg.com/wp-content/uploads/2025/03/09154140/2025-New-England-Patriots-Training-Camp-Release.pdf"
+  },
+  {
+    "date": "2025-08-09",
+    "home": "SF",
+    "away": "DEN",
+    "stage": "PRE",
+    "state": "CA",
+    "locality": null,
+    "venue": "Santa Clara",
+    "source": "https://www.denverbroncos.com/news/broncos-preseason-schedule-finalized-denver-to-face-san-francisco-49ers-on-saturday-aug-9"
+  },
+  {
+    "date": "2025-08-15",
+    "home": "SEA",
+    "away": "KC",
+    "stage": "PRE",
+    "state": "WA",
+    "locality": null,
+    "venue": "Seattle",
+    "source": "https://static.www.nfl.com/image/upload/league/apps/league-site/media-guides/2025/SEA.pdf"
+  },
+  {
+    "date": "2025-08-16",
+    "home": "MIN",
+    "away": "NE",
+    "stage": "PRE",
+    "state": "MN",
+    "locality": null,
+    "venue": "Minneapolis",
+    "source": "https://media.patriots.1rmg.com/wp-content/uploads/2025/03/09154140/2025-New-England-Patriots-Training-Camp-Release.pdf"
+  },
+  {
+    "date": "2025-08-16",
+    "home": "DEN",
+    "away": "ARI",
+    "stage": "PRE",
+    "state": "CO",
+    "locality": null,
+    "venue": "Denver",
+    "source": "https://www.denverbroncos.com/news/broncos-preseason-schedule-finalized-denver-to-face-san-francisco-49ers-on-saturday-aug-9"
+  },
+  {
+    "date": "2025-08-21",
+    "home": "NYG",
+    "away": "NE",
+    "stage": "PRE",
+    "state": "NJ",
+    "locality": null,
+    "venue": "East Rutherford",
+    "source": "https://media.patriots.1rmg.com/wp-content/uploads/2025/03/09154140/2025-New-England-Patriots-Training-Camp-Release.pdf"
+  },
+  {
+    "date": "2025-08-23",
+    "home": "GB",
+    "away": "SEA",
+    "stage": "PRE",
+    "state": "WI",
+    "locality": null,
+    "venue": "Green Bay",
+    "source": "https://static.www.nfl.com/image/upload/league/apps/league-site/media-guides/2025/SEA.pdf"
+  },
+  {
+    "date": "2025-08-23",
+    "home": "NO",
+    "away": "DEN",
+    "stage": "PRE",
+    "state": "LA",
+    "locality": null,
+    "venue": "New Orleans",
+    "source": "https://www.denverbroncos.com/news/broncos-preseason-schedule-finalized-denver-to-face-san-francisco-49ers-on-saturday-aug-9"
+  },
+  {
+    "date": "2025-09-07",
+    "home": "NE",
+    "away": "LV",
+    "stage": "REG",
+    "state": "MA",
+    "locality": null,
+    "venue": "Gillette Stadium",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-09-07",
+    "home": "DEN",
+    "away": "TEN",
+    "stage": "REG",
+    "state": "CO",
+    "locality": null,
+    "venue": "Empower Field at Mile High",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-09-07",
+    "home": "SEA",
+    "away": "SF",
+    "stage": "REG",
+    "state": "WA",
+    "locality": null,
+    "venue": "Lumen Field",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-09-14",
+    "home": "MIA",
+    "away": "NE",
+    "stage": "REG",
+    "state": "FL",
+    "locality": null,
+    "venue": "Hard Rock Stadium",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-09-14",
+    "home": "PIT",
+    "away": "SEA",
+    "stage": "REG",
+    "state": "PA",
+    "locality": "PIT",
+    "venue": "Acrisure Stadium",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-09-14",
+    "home": "IND",
+    "away": "DEN",
+    "stage": "REG",
+    "state": "IN",
+    "locality": null,
+    "venue": "Lucas Oil Stadium",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-09-21",
+    "home": "NE",
+    "away": "PIT",
+    "stage": "REG",
+    "state": "MA",
+    "locality": null,
+    "venue": "Gillette Stadium",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-09-21",
+    "home": "LAC",
+    "away": "DEN",
+    "stage": "REG",
+    "state": "CA",
+    "locality": null,
+    "venue": "SoFi Stadium",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-09-21",
+    "home": "SEA",
+    "away": "NO",
+    "stage": "REG",
+    "state": "WA",
+    "locality": null,
+    "venue": "Lumen Field",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-09-25",
+    "home": "ARI",
+    "away": "SEA",
+    "stage": "REG",
+    "state": "AZ",
+    "locality": null,
+    "venue": "State Farm Stadium",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-09-28",
+    "home": "NE",
+    "away": "CAR",
+    "stage": "REG",
+    "state": "MA",
+    "locality": null,
+    "venue": "Gillette Stadium",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-09-29",
+    "home": "DEN",
+    "away": "CIN",
+    "stage": "REG",
+    "state": "CO",
+    "locality": null,
+    "venue": "Empower Field at Mile High",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-10-05",
+    "home": "PHI",
+    "away": "DEN",
+    "stage": "REG",
+    "state": "PA",
+    "locality": "PHL",
+    "venue": "Lincoln Financial Field",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-10-05",
+    "home": "SEA",
+    "away": "TB",
+    "stage": "REG",
+    "state": "WA",
+    "locality": null,
+    "venue": "Lumen Field",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-10-05",
+    "home": "BUF",
+    "away": "NE",
+    "stage": "REG",
+    "state": "NY",
+    "locality": null,
+    "venue": "New Era Field",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-10-12",
+    "home": "NYJ",
+    "away": "DEN",
+    "stage": "REG",
+    "state": null,
+    "locality": null,
+    "venue": "Tottenham Hotspur Stadium, London",
+    "source": "https://www.denverbroncos.com/news/broncos-announce-2025-schedule-featuring-four-prime-time-games-and-late-home-stretch"
+  },
+  {
+    "date": "2025-10-12",
+    "home": "JAX",
+    "away": "SEA",
+    "stage": "REG",
+    "state": "FL",
+    "locality": null,
+    "venue": "TIAA Bank Stadium",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-10-12",
+    "home": "NO",
+    "away": "NE",
+    "stage": "REG",
+    "state": "LA",
+    "locality": null,
+    "venue": "Mercedes-Benz Superdome",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-10-19",
+    "home": "TEN",
+    "away": "NE",
+    "stage": "REG",
+    "state": "TN",
+    "locality": null,
+    "venue": "Nissan Stadium",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-10-19",
+    "home": "DEN",
+    "away": "NYG",
+    "stage": "REG",
+    "state": "CO",
+    "locality": null,
+    "venue": "Empower Field at Mile High",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-10-20",
+    "home": "SEA",
+    "away": "HOU",
+    "stage": "REG",
+    "state": "WA",
+    "locality": null,
+    "venue": "Lumen Field",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-10-26",
+    "home": "NE",
+    "away": "CLE",
+    "stage": "REG",
+    "state": "MA",
+    "locality": null,
+    "venue": "Gillette Stadium",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-10-26",
+    "home": "DEN",
+    "away": "DAL",
+    "stage": "REG",
+    "state": "CO",
+    "locality": null,
+    "venue": "Empower Field at Mile High",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-11-02",
+    "home": "HOU",
+    "away": "DEN",
+    "stage": "REG",
+    "state": "TX",
+    "locality": null,
+    "venue": "NRG Stadium",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-11-02",
+    "home": "NE",
+    "away": "ATL",
+    "stage": "REG",
+    "state": "MA",
+    "locality": null,
+    "venue": "Gillette Stadium",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-11-02",
+    "home": "WAS",
+    "away": "SEA",
+    "stage": "REG",
+    "state": "MD",
+    "locality": "MDNR",
+    "venue": "FedExField",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-11-06",
+    "home": "DEN",
+    "away": "LV",
+    "stage": "REG",
+    "state": "CO",
+    "locality": null,
+    "venue": "Empower Field at Mile High",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-11-09",
+    "home": "TB",
+    "away": "NE",
+    "stage": "REG",
+    "state": "FL",
+    "locality": null,
+    "venue": "Raymond James Stadium",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-11-09",
+    "home": "SEA",
+    "away": "ARI",
+    "stage": "REG",
+    "state": "WA",
+    "locality": null,
+    "venue": "Lumen Field",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-11-13",
+    "home": "NE",
+    "away": "NYJ",
+    "stage": "REG",
+    "state": "MA",
+    "locality": null,
+    "venue": "Gillette Stadium",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-11-16",
+    "home": "LAR",
+    "away": "SEA",
+    "stage": "REG",
+    "state": "CA",
+    "locality": null,
+    "venue": "SoFi Stadium",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-11-16",
+    "home": "DEN",
+    "away": "KC",
+    "stage": "REG",
+    "state": "CO",
+    "locality": null,
+    "venue": "Empower Field at Mile High",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-11-23",
+    "home": "CIN",
+    "away": "NE",
+    "stage": "REG",
+    "state": "OH",
+    "locality": "CIN",
+    "venue": "Paycor Stadium",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-11-23",
+    "home": "TEN",
+    "away": "SEA",
+    "stage": "REG",
+    "state": "TN",
+    "locality": null,
+    "venue": "Nissan Stadium",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-11-30",
+    "home": "SEA",
+    "away": "MIN",
+    "stage": "REG",
+    "state": "WA",
+    "locality": null,
+    "venue": "Lumen Field",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-11-30",
+    "home": "WAS",
+    "away": "DEN",
+    "stage": "REG",
+    "state": "MD",
+    "locality": "MDNR",
+    "venue": "FedExField",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-12-01",
+    "home": "NE",
+    "away": "NYG",
+    "stage": "REG",
+    "state": "MA",
+    "locality": null,
+    "venue": "Gillette Stadium",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-12-07",
+    "home": "ATL",
+    "away": "SEA",
+    "stage": "REG",
+    "state": "GA",
+    "locality": null,
+    "venue": "Mercedes-Benz Stadium",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-12-07",
+    "home": "LV",
+    "away": "DEN",
+    "stage": "REG",
+    "state": "NV",
+    "locality": null,
+    "venue": "Allegiant Stadium",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-12-14",
+    "home": "NE",
+    "away": "BUF",
+    "stage": "REG",
+    "state": "MA",
+    "locality": null,
+    "venue": "Gillette Stadium",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-12-14",
+    "home": "DEN",
+    "away": "GB",
+    "stage": "REG",
+    "state": "CO",
+    "locality": null,
+    "venue": "Empower Field at Mile High",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-12-14",
+    "home": "SEA",
+    "away": "IND",
+    "stage": "REG",
+    "state": "WA",
+    "locality": null,
+    "venue": "Lumen Field",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-12-18",
+    "home": "SEA",
+    "away": "LAR",
+    "stage": "REG",
+    "state": "WA",
+    "locality": null,
+    "venue": "Lumen Field",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-12-21",
+    "home": "DEN",
+    "away": "JAX",
+    "stage": "REG",
+    "state": "CO",
+    "locality": null,
+    "venue": "Empower Field at Mile High",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-12-21",
+    "home": "BAL",
+    "away": "NE",
+    "stage": "REG",
+    "state": "MD",
+    "locality": null,
+    "venue": "M&T Bank Stadium",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-12-25",
+    "home": "KC",
+    "away": "DEN",
+    "stage": "REG",
+    "state": "MO",
+    "locality": "KCM",
+    "venue": "GEHA Field at Arrowhead Stadium",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-12-28",
+    "home": "CAR",
+    "away": "SEA",
+    "stage": "REG",
+    "state": "NC",
+    "locality": null,
+    "venue": "Bank of America Stadium",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  },
+  {
+    "date": "2025-12-28",
+    "home": "NYJ",
+    "away": "NE",
+    "stage": "REG",
+    "state": "NJ",
+    "locality": null,
+    "venue": "MetLife Stadium",
+    "source": "https://github.com/nflverse/nfldata/blob/master/data/games.csv"
+  }
+]
