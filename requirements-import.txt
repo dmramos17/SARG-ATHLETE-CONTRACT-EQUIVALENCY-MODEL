@@ -1,0 +1,2 @@
+# Only needed to regenerate the nflverse player directory; not needed by the web server.
+pyarrow>=14,<22

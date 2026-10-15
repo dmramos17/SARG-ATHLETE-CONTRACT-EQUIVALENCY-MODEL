@@ -71,8 +71,8 @@ tax_year,state_code,filing_status,bracket_order,lower_bound,rate,verification_st
 2025,DE,single,4,20000.0,0.052000000000000005,needs_check,https://taxfoundation.org/data/all/state/state-income-tax-rates/
 2025,DE,single,5,25000.0,0.0555,needs_check,https://taxfoundation.org/data/all/state/state-income-tax-rates/
 2025,DE,single,6,60000.0,0.066,needs_check,https://taxfoundation.org/data/all/state/state-income-tax-rates/
-2025,GA,mfj,1,0.0,0.053899999999999997,needs_check,https://taxfoundation.org/data/all/state/state-income-tax-rates/
-2025,GA,single,1,0.0,0.053899999999999997,needs_check,https://taxfoundation.org/data/all/state/state-income-tax-rates/
+2025,GA,mfj,1,0.0,0.0519,provisional,https://dor.georgia.gov/document/document/2025-it-511-individual-income-tax-booklet/download
+2025,GA,single,1,0.0,0.0519,provisional,https://dor.georgia.gov/document/document/2025-it-511-individual-income-tax-booklet/download
 2025,HI,mfj,1,0.0,0.013999999999999999,needs_check,https://taxfoundation.org/data/all/state/state-income-tax-rates/
 2025,HI,mfj,2,19200.0,0.032,needs_check,https://taxfoundation.org/data/all/state/state-income-tax-rates/
 2025,HI,mfj,3,28800.0,0.055,needs_check,https://taxfoundation.org/data/all/state/state-income-tax-rates/

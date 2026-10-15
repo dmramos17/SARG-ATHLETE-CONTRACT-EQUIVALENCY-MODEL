@@ -6,20 +6,25 @@ import math
 import sys
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
+from urllib.parse import urlsplit, parse_qs, unquote
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from etl.duty_days import CompItem, DutyDayRatios, TaxTables, allocate, estimate_state_local_tax
 from etl.annual_taxes import federal_payroll, estimate_local, FEDERAL_SOURCE, PAYROLL_SOURCES
 from etl.contract_data import load_contracts, sync_contracts
-from etl.estimated_duty_days import estimate_calendar
+from etl.estimated_duty_days import estimate_calendar, estimate_player_calendar, STATES as ALL_STATES
 from etl.historical_taxes import sync_historical_taxes, FEDERAL_2025_SOURCE
+from etl.player_directory import load_directory, search_players, find_player
+from etl.player_tax import tax_contract, with_tax_info
+from etl.contract_projection import project
 
 STATES = {"MA": "Massachusetts", "TX": "Texas", "FL": "Florida", "NY": "New York", "NJ": "New Jersey", "CA": "California"}
 STATES.update({"PA": "Pennsylvania", "MI": "Michigan", "OH": "Ohio", "MO": "Missouri", "MD": "Maryland"})
 STATES.update({"WA": "Washington", "CO": "Colorado"})
 STATES.update({"AZ":"Arizona", "GA":"Georgia", "IN":"Indiana", "LA":"Louisiana",
                "MN":"Minnesota", "NC":"North Carolina", "NV":"Nevada", "TN":"Tennessee", "WI":"Wisconsin"})
+STATES.update(ALL_STATES)
 LOCALITIES = {"NYC": ("New York City", "NY"), "PHL": ("Philadelphia", "PA"),
               "DET": ("Detroit", "MI"), "CLE": ("Cleveland", "OH"),
               "CIN": ("Cincinnati", "OH"), "COL": ("Columbus", "OH"),
@@ -128,7 +133,7 @@ def calculate(data):
         if local["total"]:
             notes.append("Local taxes are before city exemptions, refunds, and cross-jurisdiction credits (including state credits for city tax). These omissions can overstate combined tax.")
         if year == 2025:
-            notes.append("2025 demo: reported season cash approximates calendar-year wages. State estimates omit deductions, exemptions, benefit recapture and some jurisdiction-specific sourcing/credits; state rows remain provisional. Pittsburgh tax, Indiana county tax, foreign tax and state payroll programs are excluded.")
+            notes.append("2025 demo: reported season cash approximates calendar-year wages. State estimates omit deductions, exemptions, benefit recapture and some jurisdiction-specific sourcing/credits; state rows remain provisional. Pittsburgh, Cleveland, Detroit, Indiana county and Maryland resident-county taxes, other unsupported local taxes, foreign tax and state payroll programs are excluded.")
         for state in sorted(set(counts) | {residence}) if year == 2026 else []:
             profile = tables.con.execute("SELECT notes FROM state_tax_profile WHERE state_code=?", (state,)).fetchone()
             if profile and profile[0]:
@@ -154,10 +159,66 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(raw)
 
     def do_GET(self):
-        if self.path == "/api/contracts":
-            self.respond(200, load_contracts())
-        elif self.path in ("/", "/index.html"):
+        url = urlsplit(self.path)
+        path = unquote(url.path)
+        if path == "/api/contracts":
+            requested = parse_qs(url.query).get('player', [''])[0]
+            reviewed = [tax_contract(p) for p in load_directory()['players'] if p.get('estimate_id')]
+            if requested:
+                player = find_player(requested) or next((p for p in load_directory()['players'] if p.get('estimate_id') == requested), None)
+                if not player:
+                    self.respond(404, {'error': 'Player not found.'})
+                    return
+                chosen = tax_contract(player)
+                teammates = sorted(
+                    (p for p in load_directory()['players']
+                     if p['team_id'] == player['team_id'] and p['id'] != player['id']),
+                    key=lambda p: p['name'].casefold(),
+                )
+                reviewed = [chosen] + [tax_contract(p) for p in teammates]
+            self.respond(200, reviewed)
+        elif path == '/api/contract-projection':
+            query = parse_qs(url.query)
+            if query.get('player', [''])[0] != '00-0034857':
+                self.respond(404, {'error': 'The full-contract pilot is available for Josh Allen.'})
+                return
+            try:
+                result = project(calculate, query.get('residence', ['NY'])[0],
+                                 query.get('filing', ['single'])[0],
+                                 query.get('qualifying', ['0'])[0] == '1',
+                                 int(query.get('travel_days', ['1'])[0]))
+                self.respond(200, result)
+            except (ValueError, TypeError) as error:
+                self.respond(400, {'error': str(error)})
+        elif path == "/api/directory":
+            directory = load_directory()
+            by_id = {p['id']: with_tax_info(p) for p in directory['players']}
+            metadata = dict(directory['metadata'])
+            metadata.update(estimate_count=sum(p['tax_ready'] for p in by_id.values()),
+                            cash_required_count=sum(not p['tax_ready'] for p in by_id.values()),schedule_team_count=32)
+            self.respond(200, dict(metadata=metadata,
+                                   featured=[by_id[i] for i in directory['featured_ids']],
+                                   tax_examples=[p for p in by_id.values() if p['reviewed_example']]))
+        elif path == "/api/players":
+            query = parse_qs(url.query).get('q', [''])[0]
+            if len(query) > 120:
+                self.respond(400, {'error': 'Search must be 120 characters or fewer.'})
+                return
+            self.respond(200, {'players': [dict(row, **{k:v for k,v in with_tax_info(find_player(row['id'])).items()
+                                                       if k in ('estimate_id','estimate_cash','tax_ready','reviewed_example','data_status')})
+                                           for row in search_players(query)]})
+        elif path.startswith('/api/players/'):
+            player = find_player(path.removeprefix('/api/players/'))
+            self.respond(200 if player else 404, with_tax_info(player) if player else {'error': 'Player not found in the 2025 directory.'})
+        elif path in ("/", "/index.html"):
             self.respond(200, Path(__file__).with_name("index.html").read_bytes(), "text/html; charset=utf-8")
+        elif path.startswith('/players/'):
+            self.respond(200, Path(__file__).with_name('player.html').read_bytes(), 'text/html; charset=utf-8')
+        elif path.startswith('/taxes/') and (path.removeprefix('/taxes/') in {r['id'] for r in load_contracts()} or find_player(path.removeprefix('/taxes/'))):
+            self.respond(200, Path(__file__).with_name('tax.html').read_bytes(), 'text/html; charset=utf-8')
+        elif path in ('/styles.css', '/home.js', '/player.js', '/common.js', '/projection.js'):
+            kind = 'text/css' if path.endswith('.css') else 'text/javascript'
+            self.respond(200, Path(__file__).with_name(path[1:]).read_bytes(), kind+'; charset=utf-8')
         else:
             self.respond(404, {"error": "Not found"})
 
@@ -173,7 +234,10 @@ class Handler(BaseHTTPRequestHandler):
             if not isinstance(data, dict):
                 raise ValueError("Expected calculation inputs.")
             if self.path == "/api/duty-days":
-                result = estimate_calendar(data.get("team_id", ""), travel_days=data.get("travel_days",1),
+                player = find_player(data['player_id']) if data.get('player_id') else None
+                if data.get('player_id') and not player:
+                    raise ValueError('Player membership record not found.')
+                result = (estimate_player_calendar if player else estimate_calendar)(player if player else data.get("team_id", ""), travel_days=data.get("travel_days",1),
                                            weekly_off_day=data.get("weekly_off_day",1),
                                            excluded_dates=data.get("excluded_dates",[]),
                                            additional_days=data.get("additional_days",[]), overrides=data.get("overrides",{}))

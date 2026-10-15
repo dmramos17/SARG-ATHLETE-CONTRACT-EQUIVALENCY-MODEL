@@ -1,0 +1,542 @@
+{
+  "player_id": "00-0034857",
+  "player": "Josh Allen",
+  "team_id": "NFL_BUF",
+  "start_year": 2025,
+  "end_year": 2030,
+  "accessed_date": "2026-10-15",
+  "headline_value": 330000000,
+  "fully_guaranteed_at_signing": 147000000,
+  "reported_total_guarantees": 250000000,
+  "cash": [
+    {
+      "year": 2025,
+      "cash": 58000000,
+      "base_salary": 1255000,
+      "workout_bonus": 0,
+      "roster_bonus": 0,
+      "signing_bonus": 56745000,
+      "unclassified_cash": 0
+    },
+    {
+      "year": 2026,
+      "cash": 55000000,
+      "base_salary": 1300000,
+      "workout_bonus": 500000,
+      "roster_bonus": 0,
+      "signing_bonus": 0,
+      "unclassified_cash": 53200000
+    },
+    {
+      "year": 2027,
+      "cash": 53000000,
+      "base_salary": 14000000,
+      "workout_bonus": 500000,
+      "roster_bonus": 0,
+      "signing_bonus": 0,
+      "unclassified_cash": 38500000
+    },
+    {
+      "year": 2028,
+      "cash": 54000000,
+      "base_salary": 18500000,
+      "workout_bonus": 500000,
+      "roster_bonus": 0,
+      "signing_bonus": 0,
+      "unclassified_cash": 35000000
+    },
+    {
+      "year": 2029,
+      "cash": 52500000,
+      "base_salary": 17000000,
+      "workout_bonus": 500000,
+      "roster_bonus": 35000000,
+      "signing_bonus": 0,
+      "unclassified_cash": 0
+    },
+    {
+      "year": 2030,
+      "cash": 57500000,
+      "base_salary": 27000000,
+      "workout_bonus": 500000,
+      "roster_bonus": 30000000,
+      "signing_bonus": 0,
+      "unclassified_cash": 0
+    }
+  ],
+  "published_schedules": {
+    "2025": [
+      {
+        "date": "2025-09-07",
+        "opponent": "BAL",
+        "home": true,
+        "state": "NY",
+        "city": "Orchard Park",
+        "week": 1,
+        "date_status": "published"
+      },
+      {
+        "date": "2025-09-14",
+        "opponent": "NYJ",
+        "home": false,
+        "state": "NJ",
+        "city": "East Rutherford",
+        "week": 2,
+        "date_status": "published"
+      },
+      {
+        "date": "2025-09-18",
+        "opponent": "MIA",
+        "home": true,
+        "state": "NY",
+        "city": "Orchard Park",
+        "week": 3,
+        "date_status": "published"
+      },
+      {
+        "date": "2025-09-28",
+        "opponent": "NO",
+        "home": true,
+        "state": "NY",
+        "city": "Orchard Park",
+        "week": 4,
+        "date_status": "published"
+      },
+      {
+        "date": "2025-10-05",
+        "opponent": "NE",
+        "home": true,
+        "state": "NY",
+        "city": "Orchard Park",
+        "week": 5,
+        "date_status": "published"
+      },
+      {
+        "date": "2025-10-13",
+        "opponent": "ATL",
+        "home": false,
+        "state": "GA",
+        "city": "Atlanta",
+        "week": 6,
+        "date_status": "published"
+      },
+      {
+        "date": "2025-10-26",
+        "opponent": "CAR",
+        "home": false,
+        "state": "NC",
+        "city": "Charlotte",
+        "week": 8,
+        "date_status": "published"
+      },
+      {
+        "date": "2025-11-02",
+        "opponent": "KC",
+        "home": true,
+        "state": "NY",
+        "city": "Orchard Park",
+        "week": 9,
+        "date_status": "published"
+      },
+      {
+        "date": "2025-11-09",
+        "opponent": "MIA",
+        "home": false,
+        "state": "FL",
+        "city": "Miami Gardens",
+        "week": 10,
+        "date_status": "published"
+      },
+      {
+        "date": "2025-11-16",
+        "opponent": "TB",
+        "home": true,
+        "state": "NY",
+        "city": "Orchard Park",
+        "week": 11,
+        "date_status": "published"
+      },
+      {
+        "date": "2025-11-20",
+        "opponent": "HOU",
+        "home": false,
+        "state": "TX",
+        "city": "Houston",
+        "week": 12,
+        "date_status": "published"
+      },
+      {
+        "date": "2025-11-30",
+        "opponent": "PIT",
+        "home": false,
+        "state": "PA",
+        "city": "Pittsburgh",
+        "week": 13,
+        "date_status": "published"
+      },
+      {
+        "date": "2025-12-07",
+        "opponent": "CIN",
+        "home": true,
+        "state": "NY",
+        "city": "Orchard Park",
+        "week": 14,
+        "date_status": "published"
+      },
+      {
+        "date": "2025-12-14",
+        "opponent": "NE",
+        "home": false,
+        "state": "MA",
+        "city": "Foxborough",
+        "week": 15,
+        "date_status": "published"
+      },
+      {
+        "date": "2025-12-21",
+        "opponent": "CLE",
+        "home": false,
+        "state": "OH",
+        "city": "Cleveland",
+        "week": 16,
+        "date_status": "published"
+      },
+      {
+        "date": "2025-12-28",
+        "opponent": "PHI",
+        "home": true,
+        "state": "NY",
+        "city": "Orchard Park",
+        "week": 17,
+        "date_status": "published"
+      },
+      {
+        "date": "2026-01-04",
+        "opponent": "NYJ",
+        "home": true,
+        "state": "NY",
+        "city": "Orchard Park",
+        "week": 18,
+        "date_status": "published"
+      }
+    ],
+    "2026": [
+      {
+        "date": "2026-09-13",
+        "opponent": "HOU",
+        "home": false,
+        "state": "TX",
+        "city": "Houston",
+        "week": 1,
+        "date_status": "published"
+      },
+      {
+        "date": "2026-09-17",
+        "opponent": "DET",
+        "home": true,
+        "state": "NY",
+        "city": "Orchard Park",
+        "week": 2,
+        "date_status": "published"
+      },
+      {
+        "date": "2026-09-27",
+        "opponent": "LAC",
+        "home": true,
+        "state": "NY",
+        "city": "Orchard Park",
+        "week": 3,
+        "date_status": "published"
+      },
+      {
+        "date": "2026-10-04",
+        "opponent": "NE",
+        "home": true,
+        "state": "NY",
+        "city": "Orchard Park",
+        "week": 4,
+        "date_status": "published"
+      },
+      {
+        "date": "2026-10-12",
+        "opponent": "LAR",
+        "home": false,
+        "state": "CA",
+        "city": "Inglewood",
+        "week": 5,
+        "date_status": "published"
+      },
+      {
+        "date": "2026-10-18",
+        "opponent": "LV",
+        "home": false,
+        "state": "NV",
+        "city": "Las Vegas",
+        "week": 6,
+        "date_status": "published"
+      },
+      {
+        "date": "2026-11-01",
+        "opponent": "BAL",
+        "home": true,
+        "state": "NY",
+        "city": "Orchard Park",
+        "week": 8,
+        "date_status": "published"
+      },
+      {
+        "date": "2026-11-09",
+        "opponent": "MIN",
+        "home": false,
+        "state": "MN",
+        "city": "Minneapolis",
+        "week": 9,
+        "date_status": "published"
+      },
+      {
+        "date": "2026-11-15",
+        "opponent": "NYJ",
+        "home": false,
+        "state": "NJ",
+        "city": "East Rutherford",
+        "week": 10,
+        "date_status": "published"
+      },
+      {
+        "date": "2026-11-22",
+        "opponent": "MIA",
+        "home": true,
+        "state": "NY",
+        "city": "Orchard Park",
+        "week": 11,
+        "date_status": "published"
+      },
+      {
+        "date": "2026-11-26",
+        "opponent": "KC",
+        "home": true,
+        "state": "NY",
+        "city": "Orchard Park",
+        "week": 12,
+        "date_status": "published"
+      },
+      {
+        "date": "2026-12-06",
+        "opponent": "NE",
+        "home": false,
+        "state": "MA",
+        "city": "Foxborough",
+        "week": 13,
+        "date_status": "published"
+      },
+      {
+        "date": "2026-12-13",
+        "opponent": "GB",
+        "home": false,
+        "state": "WI",
+        "city": "Green Bay",
+        "week": 14,
+        "date_status": "published"
+      },
+      {
+        "date": "2026-12-19",
+        "opponent": "CHI",
+        "home": true,
+        "state": "NY",
+        "city": "Orchard Park",
+        "week": 15,
+        "date_status": "published"
+      },
+      {
+        "date": "2026-12-25",
+        "opponent": "DEN",
+        "home": false,
+        "state": "CO",
+        "city": "Denver",
+        "week": 16,
+        "date_status": "published"
+      },
+      {
+        "date": "2027-01-03",
+        "opponent": "MIA",
+        "home": false,
+        "state": "FL",
+        "city": "Miami Gardens",
+        "week": 17,
+        "date_status": "published"
+      },
+      {
+        "date": "2027-01-10",
+        "opponent": "NYJ",
+        "home": true,
+        "state": "NY",
+        "city": "Orchard Park",
+        "week": 18,
+        "date_status": "unconfirmed"
+      }
+    ]
+  },
+  "rotations": {
+    "2027": {
+      "home": [
+        "MIA",
+        "NE",
+        "NYJ",
+        "HOU",
+        "IND",
+        "PHI",
+        "WAS",
+        "AFCN",
+        "NFCS"
+      ],
+      "away": [
+        "MIA",
+        "NE",
+        "NYJ",
+        "DAL",
+        "JAX",
+        "NYG",
+        "TEN",
+        "AFCW"
+      ]
+    },
+    "2028": {
+      "home": [
+        "MIA",
+        "NE",
+        "NYJ",
+        "CLE",
+        "LAR",
+        "PIT",
+        "SEA",
+        "AFCS"
+      ],
+      "away": [
+        "MIA",
+        "NE",
+        "NYJ",
+        "ARI",
+        "BAL",
+        "CIN",
+        "SF",
+        "AFCW",
+        "NFCN"
+      ]
+    },
+    "2029": {
+      "home": [
+        "MIA",
+        "NE",
+        "NYJ",
+        "ATL",
+        "CAR",
+        "DEN",
+        "LV",
+        "AFCS"
+      ],
+      "away": [
+        "MIA",
+        "NE",
+        "NYJ",
+        "KC",
+        "LAC",
+        "NO",
+        "TB",
+        "AFCN",
+        "NFCE"
+      ]
+    },
+    "2030": {
+      "home": [
+        "MIA",
+        "NE",
+        "NYJ",
+        "GB",
+        "JAX",
+        "MIN",
+        "TEN",
+        "AFCW",
+        "NFCW"
+      ],
+      "away": [
+        "MIA",
+        "NE",
+        "NYJ",
+        "CHI",
+        "DET",
+        "HOU",
+        "IND",
+        "AFCN"
+      ]
+    }
+  },
+  "sources": [
+    {
+      "name": "OverTheCap: cash flows and contract notes",
+      "url": "https://overthecap.com/player/josh-allen/6892"
+    },
+    {
+      "name": "NFL 2024 Record & Fact Book, page 12: Buffalo future opponents through 2030",
+      "url": "https://static.www.nfl.com/league/apps/league-site/media-guides/2024/2024-Record-and-Fact-Book.pdf#page=12"
+    },
+    {
+      "name": "Bills: 2027 opponents (cross-check)",
+      "url": "https://www.buffalobills.com/schedule/future-opponents"
+    },
+    {
+      "name": "Bills: published 2026 schedule",
+      "url": "https://www.buffalobills.com/schedule/"
+    },
+    {
+      "name": "ESPN: 2025 and 2026 Bills schedules",
+      "url": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/buf/schedule?season=2026"
+    }
+  ],
+  "additional_2026_games": [
+    {
+      "date": "2026-08-15",
+      "opponent": "CAR",
+      "home": true,
+      "state": "NY",
+      "city": "Orchard Park",
+      "stage": "PRE",
+      "date_status": "published"
+    },
+    {
+      "date": "2026-08-22",
+      "opponent": "CLE",
+      "home": false,
+      "state": "OH",
+      "city": "Cleveland",
+      "stage": "PRE",
+      "date_status": "published"
+    },
+    {
+      "date": "2026-08-27",
+      "opponent": "PIT",
+      "home": true,
+      "state": "NY",
+      "city": "Orchard Park",
+      "stage": "PRE",
+      "date_status": "published"
+    },
+    {
+      "date": "2026-01-11",
+      "opponent": "JAX",
+      "home": false,
+      "state": "FL",
+      "city": "Jacksonville",
+      "stage": "POST",
+      "date_status": "published"
+    },
+    {
+      "date": "2026-01-17",
+      "opponent": "DEN",
+      "home": false,
+      "state": "CO",
+      "city": "Denver",
+      "stage": "POST",
+      "date_status": "published"
+    }
+  ]
+}
