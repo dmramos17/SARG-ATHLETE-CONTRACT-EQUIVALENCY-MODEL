@@ -271,3 +271,19 @@ Tax pages now open directly to the entire-contract projection; the standalone 20
 Josh Allen pilots a two-column comparison of reported cash, scenario-mean take-home and estimated taxes. New York is the fixed residence baseline, while each new residence selection replaces the second column. Both calculations use identical filing, bonus and travel assumptions. A new selection never appends a third state. Request sequencing prevents slow earlier responses from replacing the latest choice, and baseline responses are reused for unchanged assumptions. Other players retain the single-residence contract summary.
 
 The residence comparison now applies to every player. The baseline uses that player's existing team-practice-state residence assumption; each new residence selection replaces the second column automatically. Missing cash keeps both columns labeled as known-years subtotals and never produces a zero-income comparison. The update button now lives inside Advanced settings and applies the same filing, bonus and travel choices to both columns.
+
+### MLB interface skeleton
+
+The **MLB** navigation link opens `/mlb`. It includes a baseball-themed landing page, searchable sample cards and player previews at `/mlb/players/<MLB-ID>`. The three sample identities are Shohei Ohtani (660271), Aaron Judge (592450) and Juan Soto (665742), with 2025 team affiliations and links to official MLB profiles. This is not an imported active roster; the three profiles now have separately sourced Spotrac financial snapshots.
+
+The player preview has a fixed Base State, a selectable comparison state from US MLB markets, a side-by-side placeholder table, and expandable **Open Contract Information** details. Tax results still say **Coming soon**. Reported cash now appears from Spotrac snapshots; there are no invented dollar amounts, deferred-income tax calculations, NFL schedule assumptions or requests to the NFL tax API. Toronto is represented in the seed team list without a US state; Canadian work/residence requires separate treatment before calculations are added.
+
+`data/curated/mlb_interface_seed.json` contains the 30-team reference list and three sample profiles; `etl/mlb_interface.py` decorates the catalog for `/api/mlb/directory`. The front end is `dashboard/mlb.html`, `dashboard/mlb.js` and `dashboard/mlb.css`. The next stages are verified annual cash schedules (including deferrals), baseball schedules and spring-training duty-day allocation, followed by tax-rule validation.
+
+### Spotrac MLB contract snapshots
+
+The three MLB profiles now expose reported current-contract terms and annual cash from public Spotrac pages. `data/curated/mlb_contracts_spotrac.json` stores the checked snapshots and direct source URLs; no Premium history, live scraper or subscription is used. MLB tax and duty-day calculations remain unimplemented.
+
+Ohtani's nominal $700M is separated into $2M annual playing-year cash in 2024–2033 and $68M deferred installments in 2034–2043. Judge's $360M schedule covers nine $40M years, 2023–2031. Soto's $765M base/signing schedule is distinguished from Spotrac's $765.5M cash total, which includes $500K of listed likely incentives in 2025/2026. His opt-out after 2029 and possible club increase are identified; the increased contract path is not selected automatically. N/A signing bonuses and unlisted deferred schedules are not presented as independently verified zero-dollar terms.
+
+Player pages show the snapshots inside **Open Contract Information**, including annual cash tables, reported guarantees, deferrals, conditional terms, source links and check dates. The state comparison can display reported gross cash, but estimated take-home and personal taxes remain unavailable pending the MLB model. Financial tests verify that deferred dollars are not counted twice and listed incentives are not conflated with guaranteed base/signing cash.

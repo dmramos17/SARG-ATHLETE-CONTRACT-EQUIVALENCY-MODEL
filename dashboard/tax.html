@@ -7,13 +7,14 @@
 <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-<header><a class="brand home-brand" href="/" aria-label="SARG Tax Lab home"><svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><path d="M6 4h28v21L20 36 6 25V4Z" stroke="currentColor" stroke-width="2"/><path d="M12 25c0-8 5-13 16-13 0 10-5 15-16 13Z" fill="currentColor"/><path d="m17 22 8-8m-8 3 5 5m-2-8 5 5" stroke="#101929" stroke-width="1.5"/></svg><strong>SARG <span>/ TAX LAB</span></strong></a><nav aria-label="Main navigation"><a href="/#player-search">Player search</a><a href="/#about">The project</a></nav><span class="season">2025 · Research prototype</span></header>
+<header><a class="brand home-brand" href="/" aria-label="SARG Tax Lab home"><svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><path d="M6 4h28v21L20 36 6 25V4Z" stroke="currentColor" stroke-width="2"/><path d="M12 25c0-8 5-13 16-13 0 10-5 15-16 13Z" fill="currentColor"/><path d="m17 22 8-8m-8 3 5 5m-2-8 5 5" stroke="#101929" stroke-width="1.5"/></svg><strong>SARG <span>/ TAX LAB</span></strong></a><nav aria-label="Main navigation"><a class="league-link" href="/" aria-current="true">NFL</a><a class="league-link" href="/mlb">MLB</a><a href="/#player-search">Player search</a><a href="/#about">The project</a></nav><span class="season">2025 · Research prototype</span></header>
 <main><a class="back-link" href="/">← Back to player search</a>
 <section class="hero" aria-label="Athlete contract research"><div class="hero-copy"><p class="eyebrow"><span class="pill">NFL</span> Contract research / 2025</p><h1>Athlete contract<br>equivalency model</h1><p class="intro">Explore how compensation, residence, and work location affect an athlete’s estimated federal, payroll, state, and local taxes.</p></div><svg class="stadium" viewBox="0 0 560 270" fill="none" aria-hidden="true"><defs><linearGradient id="turf" x1="280" y1="100" x2="280" y2="270" gradientUnits="userSpaceOnUse"><stop stop-color="#296155"/><stop offset="1" stop-color="#102c34"/></linearGradient><linearGradient id="lights" x1="0" y1="0" x2="0" y2="150" gradientUnits="userSpaceOnUse"><stop stop-color="#8accf2" stop-opacity=".2"/><stop offset="1" stop-color="#8accf2" stop-opacity="0"/></linearGradient></defs><path d="M65 35h440l55 125H0L65 35Z" fill="url(#lights)"/><path d="M50 103 0 175h560l-53-72H50Z" fill="#172d43"/><path d="M50 106h457M40 120h476M28 138h500M16 154h532" stroke="#39536b" stroke-width="3"/><path d="M125 153h307l115 113H10l115-113Z" fill="url(#turf)" stroke="#85b6ae" stroke-opacity=".45"/><g stroke="#b1d4c9" stroke-opacity=".45"><path d="m155 153-77 113m108-113-41 113m72-113-7 113m37-113 27 113m4-113 62 113m-32-113 96 113m-65-113 130 113m-99-113 163 113"/><path d="M107 172h345M89 190h381M69 209h421M48 229h462M28 247h500"/></g><text x="275" y="211" fill="#b1d4c9" fill-opacity=".6" font-family="Arial,sans-serif" font-size="13" font-weight="bold" transform="rotate(90 275 211)">50</text><g fill="#ecf9ff"><path d="M83 38h64v5H83zm0 9h64v5H83zm295-9h64v5h-64zm0 9h64v5h-64z"/></g><path d="M115 50v55m295-55v55" stroke="#47758d" stroke-width="3"/><g transform="translate(430 85) rotate(-22)"><path d="M0 0c-35-33-74-33-108 0 34 33 73 33 108 0Z" fill="#e47c49"/><path d="M-78 0h45m-36-7v14m9-14v14m9-14v14m9-14v14" stroke="#fff0dc" stroke-width="3"/><path d="M-90-13v26m72-26v26" stroke="#ffe9d6" stroke-width="5"/></g></svg></section>
 <section id="full-contract-view" class="panel full-contract" aria-label="Entire contract projection">
-<label for="contract">Player</label><select id="contract" disabled><option>Loading players…</option></select>
-<p class="eyebrow" id="projection-identity">NFL / CONTRACT PROJECTION</p><h2>What does the whole deal take home?</h2><p>Reported yearly cash, estimated work locations, and a year-by-year tax calculation. All amounts are nominal dollars.</p><p id="projection-coverage" class="notice" role="status"></p><p id="projection-headline" class="help"></p>
-<div class="projection-residence"><label for="projection-residence">Assumed residence</label><select id="projection-residence"></select><p class="help">Change residence to compare estimated after-tax contract value across states.</p></div>
+<p class="eyebrow" id="projection-identity">NFL / CONTRACT PROJECTION</p><h2>Expected Contract Value</h2><p class="residence-intro"><strong>Compare estimated after-tax contract value across NFL stadium and practice-base states.</strong></p><p id="projection-coverage" class="notice" role="status"></p><p id="projection-headline" class="help"></p>
+<div class="projection-residence">
+<div class="residence-controls"><div><label for="team-location-state">Base State</label><input id="team-location-state" type="text" readonly aria-describedby="team-location-note"><p id="team-location-note" class="help">Fixed team-based residence assumption.</p></div>
+<div><label for="projection-residence">Comparison state</label><select id="projection-residence"></select></div></div></div>
 <details id="projection-advanced"><summary>Advanced settings</summary><div class="projection-controls">
 <div><label for="projection-filing">Filing status</label><select id="projection-filing"><option value="single">Single</option><option value="mfj">Married filing jointly</option></select><p class="help">Defaults to single. Joint filing assumes no spouse income.</p></div>
 <div><label for="projection-bonus">Signing-bonus sourcing</label><select id="projection-bonus"><option value="0">Allocate imported cash as service wages</option><option value="1">Allen 2025: assume residence-only qualification</option></select><p class="help">Changes how bonus cash is allocated to states. Residence-only treatment is available for Allen's reviewed bonus assumption.</p></div>
@@ -21,12 +22,12 @@
 </div><button type="button" class="calculate" id="update-projection">Update contract projection</button></details><p role="status" id="projection-status"></p>
 <div id="projection-output" hidden>
 <section id="residence-comparison" aria-label="Residence comparison" hidden>
-<h3>Compare assumed residence</h3><p class="help" id="comparison-explanation"></p>
+<h3>Compare Residences</h3><p class="help" id="comparison-explanation"></p>
 <div class="table-wrap"><table class="residence-comparison-table"><thead><tr><th scope="col">Contract value</th><th scope="col"><span id="baseline-state"></span><small>Team-based residence assumption</small></th><th scope="col" id="comparison-state">Choose another state</th></tr></thead><tbody>
 <tr><th scope="row" id="comparison-cash-label">Reported cash window</th><td id="baseline-cash"></td><td id="comparison-cash"></td></tr>
 <tr><th scope="row" id="comparison-net-label">Estimated take-home · scenario mean</th><td id="baseline-net"></td><td id="comparison-net"></td></tr>
 <tr><th scope="row" id="comparison-tax-label">Estimated taxes</th><td id="baseline-tax"></td><td id="comparison-tax"></td></tr>
-</tbody></table></div><p class="help" id="comparison-difference" aria-live="polite"></p></section><div class="projection-totals" id="projection-single-totals"><div><small id="projection-total-label">Reported cash</small><strong id="projection-gross"></strong></div><div><small id="projection-net-label">Estimated take-home · scenario mean</small><strong id="projection-net"></strong></div><div><small id="projection-tax-label">Estimated taxes</small><strong id="projection-tax"></strong></div></div>
+</tbody></table></div><p class="help" id="comparison-difference" aria-live="polite"></p></section><a id="open-contract-info" class="contract-info-link" href="#">Open Contract Information</a><div class="projection-totals" id="projection-single-totals"><div><small id="projection-total-label">Reported cash</small><strong id="projection-gross"></strong></div><div><small id="projection-net-label">Estimated take-home · scenario mean</small><strong id="projection-net"></strong></div><div><small id="projection-tax-label">Estimated taxes</small><strong id="projection-tax"></strong></div></div>
 <p class="projection-range" id="projection-range"></p><p class="help">Uses the selected filing assumption. Constant 2025 tax rules for every year. The range reflects unknown opponents only; it is not a confidence interval. Cash assumes reported payments are earned. A partial subtotal is never the entire contract value.</p>
 <div class="table-wrap"><table><caption id="projection-annual-caption">Annual contract projection · 2025 tax rules held constant</caption><thead><tr><th>Calendar year</th><th>Cash</th><th>Federal</th><th>Payroll</th><th>State</th><th>Selected local</th><th>Take-home mean & range</th><th>Schedule basis</th></tr></thead><tbody id="projection-years"></tbody></table></div>
 <details><summary>Yearly cash components & guarantees</summary><p class="help" id="projection-guarantees"></p><div class="table-wrap"><table><thead><tr><th>Year</th><th>Base salary</th><th>Signing cash</th><th>Roster bonus</th><th>Workout bonus</th><th>Other / unclassified cash</th><th>Total cash</th></tr></thead><tbody id="projection-cash"></tbody></table></div><p class="help">Other cash is the remainder of reported annual cash after the listed components; it is not inferred from prorated cap bonuses. Signing and option bonus tax qualification is not verified.</p></details>
@@ -39,24 +40,18 @@ const states={"AL": "Alabama", "AK": "Alaska", "AZ": "Arizona", "AR": "Arkansas"
 const $=id=>document.getElementById(id);
 const money=v=>v==null?'Not reported':new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(v);
 function text(parent,tag,value){const el=document.createElement(tag);el.textContent=value;parent.append(el);return el;}
-let contracts=[];
 async function fetchContracts(){
  try{
   const requested=decodeURIComponent(location.pathname.split('/').pop());
   const response=await fetch('/api/contracts?player='+encodeURIComponent(requested));
-  if(!response.ok)throw new Error('Player contracts unavailable.');
-  contracts=await response.json();$('contract').replaceChildren();
-  for(const row of contracts){const option=text($('contract'),'option',row.player+' · '+row.team);option.value=row.id;}
-  if(contracts.some(row=>row.id===requested))$('contract').value=requested;
-  $('contract').disabled=false;loadContract();
+  if(!response.ok)throw new Error('Player contract unavailable.');
+  const rows=await response.json();
+  const row=rows.find(r=>r.id===requested||r.player_id===requested);
+  if(!row)throw new Error('Player contract unavailable.');
+  document.title=row.player+' · Expected Contract Value · SARG';
+  configureProjection(row);
  }catch(error){$('projection-status').textContent=error.message;}
 }
-function loadContract(){
- const row=contracts.find(c=>c.id===$('contract').value);if(!row)return;
- history.replaceState(null,'','/taxes/'+encodeURIComponent(row.id));
- document.title=row.player+' · Contract projection · SARG';configureProjection(row);
-}
-$('contract').addEventListener('change',loadContract);
 </script>
 <script src="/projection.js"></script>
 </body>

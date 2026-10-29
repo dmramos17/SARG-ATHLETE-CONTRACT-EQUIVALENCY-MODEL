@@ -18,6 +18,7 @@ from etl.historical_taxes import sync_historical_taxes, FEDERAL_2025_SOURCE
 from etl.player_directory import load_directory, search_players, find_player
 from etl.player_tax import tax_contract, with_tax_info
 from etl.league_projection import project_player
+from etl.mlb_interface import catalog as mlb_catalog
 
 STATES = {"MA": "Massachusetts", "TX": "Texas", "FL": "Florida", "NY": "New York", "NJ": "New Jersey", "CA": "California"}
 STATES.update({"PA": "Pennsylvania", "MI": "Michigan", "OH": "Ohio", "MO": "Missouri", "MD": "Maryland"})
@@ -212,13 +213,17 @@ class Handler(BaseHTTPRequestHandler):
         elif path.startswith('/api/players/'):
             player = find_player(path.removeprefix('/api/players/'))
             self.respond(200 if player else 404, with_tax_info(player) if player else {'error': 'Player not found in the 2025 directory.'})
+        elif path == '/api/mlb/directory':
+            self.respond(200, mlb_catalog())
+        elif path in ('/mlb', '/mlb/') or path.startswith('/mlb/players/'):
+            self.respond(200, Path(__file__).with_name('mlb.html').read_bytes(), 'text/html; charset=utf-8')
         elif path in ("/", "/index.html"):
             self.respond(200, Path(__file__).with_name("index.html").read_bytes(), "text/html; charset=utf-8")
         elif path.startswith('/players/'):
             self.respond(200, Path(__file__).with_name('player.html').read_bytes(), 'text/html; charset=utf-8')
         elif path.startswith('/taxes/') and (path.removeprefix('/taxes/') in {r['id'] for r in load_contracts()} or find_player(path.removeprefix('/taxes/'))):
             self.respond(200, Path(__file__).with_name('tax.html').read_bytes(), 'text/html; charset=utf-8')
-        elif path in ('/styles.css', '/home.js', '/player.js', '/common.js', '/projection.js'):
+        elif path in ('/styles.css', '/home.js', '/player.js', '/common.js', '/projection.js', '/mlb.js', '/mlb.css'):
             kind = 'text/css' if path.endswith('.css') else 'text/javascript'
             self.respond(200, Path(__file__).with_name(path[1:]).read_bytes(), kind+'; charset=utf-8')
         else:

@@ -1,0 +1,430 @@
+{
+  "metadata": {
+    "source": "Spotrac public current-contract pages",
+    "accessed_date": "2026-10-28",
+    "scope": "Manually checked snapshot for three players; no historical premium data or live feed.",
+    "tax_status": "coming_soon"
+  },
+  "players": {
+    "660271": {
+      "player": "Shohei Ohtani",
+      "team": "Los Angeles Dodgers",
+      "start_year": 2024,
+      "end_year": 2033,
+      "years": 10,
+      "headline_value": 700000000,
+      "reported_guarantees": 700000000,
+      "average_annual_value": 70000000,
+      "signing_bonus": null,
+      "source_url": "https://www.spotrac.com/mlb/player/_/id/24661/shohei-ohtani",
+      "deferred_total": 680000000,
+      "notes": [
+        "Playing years pay $2M annually; deferred installments are $68M each July 1, 2034\u20132043.",
+        "Nominal contract value is not current-year cash or personal taxable income."
+      ],
+      "annual": [
+        {
+          "year": 2024,
+          "salary_cash": 2000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 2000000,
+          "phase": "Playing-year cash"
+        },
+        {
+          "year": 2025,
+          "salary_cash": 2000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 2000000,
+          "phase": "Playing-year cash"
+        },
+        {
+          "year": 2026,
+          "salary_cash": 2000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 2000000,
+          "phase": "Playing-year cash"
+        },
+        {
+          "year": 2027,
+          "salary_cash": 2000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 2000000,
+          "phase": "Playing-year cash"
+        },
+        {
+          "year": 2028,
+          "salary_cash": 2000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 2000000,
+          "phase": "Playing-year cash"
+        },
+        {
+          "year": 2029,
+          "salary_cash": 2000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 2000000,
+          "phase": "Playing-year cash"
+        },
+        {
+          "year": 2030,
+          "salary_cash": 2000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 2000000,
+          "phase": "Playing-year cash"
+        },
+        {
+          "year": 2031,
+          "salary_cash": 2000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 2000000,
+          "phase": "Playing-year cash"
+        },
+        {
+          "year": 2032,
+          "salary_cash": 2000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 2000000,
+          "phase": "Playing-year cash"
+        },
+        {
+          "year": 2033,
+          "salary_cash": 2000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 2000000,
+          "phase": "Playing-year cash"
+        },
+        {
+          "year": 2034,
+          "salary_cash": 68000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 68000000,
+          "phase": "Deferred payment"
+        },
+        {
+          "year": 2035,
+          "salary_cash": 68000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 68000000,
+          "phase": "Deferred payment"
+        },
+        {
+          "year": 2036,
+          "salary_cash": 68000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 68000000,
+          "phase": "Deferred payment"
+        },
+        {
+          "year": 2037,
+          "salary_cash": 68000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 68000000,
+          "phase": "Deferred payment"
+        },
+        {
+          "year": 2038,
+          "salary_cash": 68000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 68000000,
+          "phase": "Deferred payment"
+        },
+        {
+          "year": 2039,
+          "salary_cash": 68000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 68000000,
+          "phase": "Deferred payment"
+        },
+        {
+          "year": 2040,
+          "salary_cash": 68000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 68000000,
+          "phase": "Deferred payment"
+        },
+        {
+          "year": 2041,
+          "salary_cash": 68000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 68000000,
+          "phase": "Deferred payment"
+        },
+        {
+          "year": 2042,
+          "salary_cash": 68000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 68000000,
+          "phase": "Deferred payment"
+        },
+        {
+          "year": 2043,
+          "salary_cash": 68000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 68000000,
+          "phase": "Deferred payment"
+        }
+      ],
+      "accessed_date": "2026-10-28",
+      "status": "reported_snapshot",
+      "scheduled_cash_total": 700000000,
+      "reported_cash_total": 700000000
+    },
+    "592450": {
+      "player": "Aaron Judge",
+      "team": "New York Yankees",
+      "start_year": 2023,
+      "end_year": 2031,
+      "years": 9,
+      "headline_value": 360000000,
+      "reported_guarantees": 360000000,
+      "average_annual_value": 40000000,
+      "signing_bonus": null,
+      "source_url": "https://www.spotrac.com/mlb/player/_/id/18499/aaron-judge",
+      "deferred_total": null,
+      "notes": [
+        "The public cash schedule lists $40M annually for 2023\u20132031. No separate deferred-payment schedule is shown."
+      ],
+      "annual": [
+        {
+          "year": 2023,
+          "salary_cash": 40000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 40000000,
+          "phase": "Playing-year cash"
+        },
+        {
+          "year": 2024,
+          "salary_cash": 40000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 40000000,
+          "phase": "Playing-year cash"
+        },
+        {
+          "year": 2025,
+          "salary_cash": 40000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 40000000,
+          "phase": "Playing-year cash"
+        },
+        {
+          "year": 2026,
+          "salary_cash": 40000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 40000000,
+          "phase": "Playing-year cash"
+        },
+        {
+          "year": 2027,
+          "salary_cash": 40000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 40000000,
+          "phase": "Playing-year cash"
+        },
+        {
+          "year": 2028,
+          "salary_cash": 40000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 40000000,
+          "phase": "Playing-year cash"
+        },
+        {
+          "year": 2029,
+          "salary_cash": 40000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 40000000,
+          "phase": "Playing-year cash"
+        },
+        {
+          "year": 2030,
+          "salary_cash": 40000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 40000000,
+          "phase": "Playing-year cash"
+        },
+        {
+          "year": 2031,
+          "salary_cash": 40000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 40000000,
+          "phase": "Playing-year cash"
+        }
+      ],
+      "accessed_date": "2026-10-28",
+      "status": "reported_snapshot",
+      "scheduled_cash_total": 360000000,
+      "reported_cash_total": 360000000
+    },
+    "665742": {
+      "player": "Juan Soto",
+      "team": "New York Mets",
+      "start_year": 2025,
+      "end_year": 2039,
+      "years": 15,
+      "headline_value": 765000000,
+      "reported_guarantees": 765000000,
+      "average_annual_value": 51000000,
+      "signing_bonus": 75000000,
+      "source_url": "https://www.spotrac.com/mlb/player/_/id/25959/juan-soto",
+      "deferred_total": null,
+      "notes": [
+        "Opt-out after 2029; the club can prevent it by adding $4M annually in 2030\u20132039. The increased path is not included here.",
+        "Spotrac lists likely incentives of $400K in 2025 and $100K in 2026; these are not independently verified receipts. No separate deferred schedule is shown."
+      ],
+      "annual": [
+        {
+          "year": 2025,
+          "salary_cash": 46875000,
+          "signing_cash": 75000000,
+          "listed_incentives": 400000,
+          "reported_cash": 122275000,
+          "phase": "Playing-year cash"
+        },
+        {
+          "year": 2026,
+          "salary_cash": 46875000,
+          "signing_cash": 0,
+          "listed_incentives": 100000,
+          "reported_cash": 46975000,
+          "phase": "Playing-year cash"
+        },
+        {
+          "year": 2027,
+          "salary_cash": 42500000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 42500000,
+          "phase": "Playing-year cash"
+        },
+        {
+          "year": 2028,
+          "salary_cash": 46875000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 46875000,
+          "phase": "Playing-year cash"
+        },
+        {
+          "year": 2029,
+          "salary_cash": 46875000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 46875000,
+          "phase": "Playing-year cash"
+        },
+        {
+          "year": 2030,
+          "salary_cash": 46000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 46000000,
+          "phase": "Subject to opt-out"
+        },
+        {
+          "year": 2031,
+          "salary_cash": 46000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 46000000,
+          "phase": "Subject to opt-out"
+        },
+        {
+          "year": 2032,
+          "salary_cash": 46000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 46000000,
+          "phase": "Subject to opt-out"
+        },
+        {
+          "year": 2033,
+          "salary_cash": 46000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 46000000,
+          "phase": "Subject to opt-out"
+        },
+        {
+          "year": 2034,
+          "salary_cash": 46000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 46000000,
+          "phase": "Subject to opt-out"
+        },
+        {
+          "year": 2035,
+          "salary_cash": 46000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 46000000,
+          "phase": "Subject to opt-out"
+        },
+        {
+          "year": 2036,
+          "salary_cash": 46000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 46000000,
+          "phase": "Subject to opt-out"
+        },
+        {
+          "year": 2037,
+          "salary_cash": 46000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 46000000,
+          "phase": "Subject to opt-out"
+        },
+        {
+          "year": 2038,
+          "salary_cash": 46000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 46000000,
+          "phase": "Subject to opt-out"
+        },
+        {
+          "year": 2039,
+          "salary_cash": 46000000,
+          "signing_cash": 0,
+          "listed_incentives": 0,
+          "reported_cash": 46000000,
+          "phase": "Subject to opt-out"
+        }
+      ],
+      "accessed_date": "2026-10-28",
+      "status": "reported_snapshot",
+      "scheduled_cash_total": 765000000,
+      "reported_cash_total": 765500000
+    }
+  }
+}

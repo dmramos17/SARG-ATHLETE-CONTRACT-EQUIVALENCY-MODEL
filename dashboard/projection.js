@@ -1,6 +1,8 @@
 let projectionRequest=0;
 let projectionPlayer=null;
-for(const [code,name] of Object.entries(states)){const o=document.createElement('option');o.value=code;o.textContent=name;$('projection-residence').append(o);}
+// Residence choices use 2025 NFL stadium and practice states from teams.csv.
+const nflResidenceStates=new Set(["AZ", "CA", "CO", "FL", "GA", "IL", "IN", "LA", "MA", "MD", "MI", "MN", "MO", "NC", "NJ", "NV", "NY", "OH", "PA", "TN", "TX", "VA", "WA", "WI"]);
+for(const [code,name] of Object.entries(states).filter(([code])=>nflResidenceStates.has(code))){const o=document.createElement('option');o.value=code;o.textContent=name;$('projection-residence').append(o);}
 $('projection-residence').value='NY';
 const projectionCache=new Map();
 async function fetchProjection(query){
@@ -25,13 +27,15 @@ function renderComparison(out,baseline){
   $('comparison-'+suffix).textContent=different?money(out[key]):'—';
  }
  const difference=out.remaining-baseline.remaining;
- $('comparison-difference').textContent=out.remaining==null||baseline.remaining==null?'Verified annual cash is needed before take-home can be compared.':different?states[out.residence]+': '+money(Math.abs(difference))+' '+(difference>=0?'more':'less')+' estimated take-home than the '+baselineName+' baseline.':'Choose a different assumed residence above to compare it with '+baselineName+'.';
+ $('comparison-difference').textContent=out.remaining==null||baseline.remaining==null?'Verified annual cash is needed before take-home can be compared.':different?states[out.residence]+': '+money(Math.abs(difference))+' '+(difference>=0?'more':'less')+' estimated take-home than the '+baselineName+' baseline.':'';
 }
 function configureProjection(row){
  projectionRequest++;projectionPlayer=row;
+ $('open-contract-info').href='/players/'+encodeURIComponent(row.player_id);
  $('projection-output').hidden=true;
  $('projection-coverage').textContent='';$('projection-headline').textContent='';
  $('projection-identity').textContent=row.player+' / '+row.team+' · CONTRACT PROJECTION';
+ $('team-location-state').value=states[row.home_state];
  $('projection-residence').value=row.home_state;
  $('projection-filing').value='single';$('projection-advanced').open=false;
  $('projection-bonus').value='0';$('projection-travel').value='1';
@@ -57,7 +61,8 @@ async function loadProjection(){
   $('projection-total-label').textContent=out.total_label;
   $('projection-tax-label').textContent=out.complete?'Estimated taxes':'Known-years tax subtotal';
   $('projection-net-label').textContent=out.complete?'Estimated take-home · scenario mean':'Known-years take-home subtotal';
-  $('projection-coverage').textContent=(out.complete?'Every displayed year has reported cash.':'Partial projection: cash is missing or unusable for '+out.missing_years.join(', ')+'. Totals include known years only.')+(out.reconciles_headline?' Cash totals reconcile to the reported headline value.':' The cash window does not reconcile to headline value; this is not a verified full-contract total.');
+  $('projection-coverage').hidden=out.complete;
+  $('projection-coverage').textContent=out.complete?'':'Partial projection: cash is missing or unusable for '+out.missing_years.join(', ')+'. Totals include known years only.';
   $('projection-headline').textContent='Reported headline value: '+money(out.headline_value)+' · Cash window: '+out.year_start+'–'+out.year_end+'. '+(out.coverage_notes||[]).join(' ');
   $('projection-gross').textContent=money(out.gross);$('projection-net').textContent=money(out.remaining);$('projection-tax').textContent=money(out.total_tax);
   $('projection-range').textContent=out.remaining==null?'Annual cash is needed before a tax total can be calculated.':(out.complete?'Schedule-based take-home range: ':'Known-years take-home range: ')+money(out.low_remaining)+' – '+money(out.high_remaining);
@@ -74,7 +79,7 @@ async function loadProjection(){
   out.notes.forEach(n=>text($('projection-notes'),'p',n));
   text($('projection-sources'),'p','Source snapshot checked '+out.accessed_date+'.');
   for(const source of out.sources){const p=text($('projection-sources'),'p','');const a=text(p,'a',source.name);a.href=source.url;a.target='_blank';a.rel='noopener noreferrer';}
-  $('projection-output').hidden=false;$('projection-status').textContent='Projection ready · '+states[out.residence]+' residence · '+(out.filing==='single'?'single':'married filing jointly')+' · 2025 tax rules held constant.';
+  $('projection-output').hidden=false;$('projection-status').textContent='';
  }catch(error){if(request===projectionRequest)$('projection-status').textContent='Projection unavailable: '+error.message;}
  finally{if(request===projectionRequest)$('update-projection').disabled=false;}
 }

@@ -9,3 +9,10 @@
 
 .projection-residence{max-width:440px;margin:24px 0}.full-contract #projection-advanced{margin:18px 0 24px;padding:16px;background:#f1f5f9;border:1px solid #d7e1ed;border-radius:6px}.full-contract #projection-advanced .projection-controls{margin-bottom:0}
 .residence-comparison-table{width:100%;table-layout:fixed;margin:18px 0}.residence-comparison-table th,.residence-comparison-table td{white-space:normal!important;text-align:left;padding:18px 14px;min-width:0!important}.residence-comparison-table thead{background:#152c46;color:white}.residence-comparison-table small{display:block;font-size:.7rem;margin-top:6px;color:#c6d5e7}.residence-comparison-table td{font-weight:800;font-size:clamp(.95rem,2vw,1.5rem);font-variant-numeric:tabular-nums}.residence-comparison-table tbody th{font-size:.8rem}.residence-comparison-table td:last-child{background:#fff1e9}#full-contract-view>#contract{max-width:500px;display:block;margin-bottom:24px}
+
+.full-contract .projection-residence{max-width:850px}.residence-intro{font-size:1rem;color:#17283c;line-height:1.6;margin-bottom:20px}.residence-intro strong{font-weight:800}.residence-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}.residence-controls input[readonly]{background:#e8eef5;color:#263d58;font-weight:700;cursor:default}@media(max-width:560px){.residence-controls{grid-template-columns:1fr;gap:8px}}
+
+#projection-status:empty,#comparison-difference:empty{display:none}
+
+.contract-info-link{display:inline-flex;align-items:center;justify-content:center;margin:12px 0 24px;padding:12px 20px;border:1px solid #304b68;border-radius:6px;background:#172d46;color:#fff;text-decoration:none;font-weight:750;font-size:.9rem}.contract-info-link:hover{background:#254360}
+header nav .league-link{border:1px solid #40536b;padding:6px 10px;border-radius:4px;font-size:.72rem;font-weight:800}header nav .league-link[aria-current=true]{color:#ffb18a;background:#38271f;border-color:#a95e3b}header nav{flex-wrap:wrap}

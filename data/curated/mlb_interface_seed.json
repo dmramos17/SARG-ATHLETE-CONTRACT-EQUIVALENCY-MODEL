@@ -1,0 +1,217 @@
+{
+  "metadata": {
+    "season": 2025,
+    "scope": "Interface skeleton with three sample profiles; not a complete roster or contract database.",
+    "tax_status": "coming_soon",
+    "contract_status": "not_imported",
+    "verified_date": "2026-10-28"
+  },
+  "teams": [
+    {
+      "code": "ARI",
+      "name": "Arizona Diamondbacks",
+      "state": "AZ",
+      "country": "US"
+    },
+    {
+      "code": "ATH",
+      "name": "Athletics",
+      "state": "CA",
+      "country": "US"
+    },
+    {
+      "code": "ATL",
+      "name": "Atlanta Braves",
+      "state": "GA",
+      "country": "US"
+    },
+    {
+      "code": "BAL",
+      "name": "Baltimore Orioles",
+      "state": "MD",
+      "country": "US"
+    },
+    {
+      "code": "BOS",
+      "name": "Boston Red Sox",
+      "state": "MA",
+      "country": "US"
+    },
+    {
+      "code": "CHC",
+      "name": "Chicago Cubs",
+      "state": "IL",
+      "country": "US"
+    },
+    {
+      "code": "CWS",
+      "name": "Chicago White Sox",
+      "state": "IL",
+      "country": "US"
+    },
+    {
+      "code": "CIN",
+      "name": "Cincinnati Reds",
+      "state": "OH",
+      "country": "US"
+    },
+    {
+      "code": "CLE",
+      "name": "Cleveland Guardians",
+      "state": "OH",
+      "country": "US"
+    },
+    {
+      "code": "COL",
+      "name": "Colorado Rockies",
+      "state": "CO",
+      "country": "US"
+    },
+    {
+      "code": "DET",
+      "name": "Detroit Tigers",
+      "state": "MI",
+      "country": "US"
+    },
+    {
+      "code": "HOU",
+      "name": "Houston Astros",
+      "state": "TX",
+      "country": "US"
+    },
+    {
+      "code": "KC",
+      "name": "Kansas City Royals",
+      "state": "MO",
+      "country": "US"
+    },
+    {
+      "code": "LAA",
+      "name": "Los Angeles Angels",
+      "state": "CA",
+      "country": "US"
+    },
+    {
+      "code": "LAD",
+      "name": "Los Angeles Dodgers",
+      "state": "CA",
+      "country": "US"
+    },
+    {
+      "code": "MIA",
+      "name": "Miami Marlins",
+      "state": "FL",
+      "country": "US"
+    },
+    {
+      "code": "MIL",
+      "name": "Milwaukee Brewers",
+      "state": "WI",
+      "country": "US"
+    },
+    {
+      "code": "MIN",
+      "name": "Minnesota Twins",
+      "state": "MN",
+      "country": "US"
+    },
+    {
+      "code": "NYM",
+      "name": "New York Mets",
+      "state": "NY",
+      "country": "US"
+    },
+    {
+      "code": "NYY",
+      "name": "New York Yankees",
+      "state": "NY",
+      "country": "US"
+    },
+    {
+      "code": "PHI",
+      "name": "Philadelphia Phillies",
+      "state": "PA",
+      "country": "US"
+    },
+    {
+      "code": "PIT",
+      "name": "Pittsburgh Pirates",
+      "state": "PA",
+      "country": "US"
+    },
+    {
+      "code": "SD",
+      "name": "San Diego Padres",
+      "state": "CA",
+      "country": "US"
+    },
+    {
+      "code": "SF",
+      "name": "San Francisco Giants",
+      "state": "CA",
+      "country": "US"
+    },
+    {
+      "code": "SEA",
+      "name": "Seattle Mariners",
+      "state": "WA",
+      "country": "US"
+    },
+    {
+      "code": "STL",
+      "name": "St. Louis Cardinals",
+      "state": "MO",
+      "country": "US"
+    },
+    {
+      "code": "TB",
+      "name": "Tampa Bay Rays",
+      "state": "FL",
+      "country": "US"
+    },
+    {
+      "code": "TEX",
+      "name": "Texas Rangers",
+      "state": "TX",
+      "country": "US"
+    },
+    {
+      "code": "TOR",
+      "name": "Toronto Blue Jays",
+      "state": null,
+      "country": "CA"
+    },
+    {
+      "code": "WSH",
+      "name": "Washington Nationals",
+      "state": "DC",
+      "country": "US"
+    }
+  ],
+  "players": [
+    {
+      "id": "660271",
+      "name": "Shohei Ohtani",
+      "position": "Two-way player",
+      "team_code": "LAD",
+      "focus": "Cash timing & deferred payments",
+      "source": "https://www.mlb.com/player/shohei-ohtani-660271"
+    },
+    {
+      "id": "592450",
+      "name": "Aaron Judge",
+      "position": "Outfielder",
+      "team_code": "NYY",
+      "focus": "Annual cash & residence",
+      "source": "https://www.mlb.com/player/aaron-judge-592450"
+    },
+    {
+      "id": "665742",
+      "name": "Juan Soto",
+      "position": "Outfielder",
+      "team_code": "NYM",
+      "focus": "Multi-year contract structure",
+      "source": "https://www.mlb.com/player/juan-soto-665742"
+    }
+  ]
+}
