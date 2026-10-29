@@ -17,7 +17,7 @@ from etl.estimated_duty_days import estimate_calendar, estimate_player_calendar,
 from etl.historical_taxes import sync_historical_taxes, FEDERAL_2025_SOURCE
 from etl.player_directory import load_directory, search_players, find_player
 from etl.player_tax import tax_contract, with_tax_info
-from etl.contract_projection import project
+from etl.league_projection import project_player
 
 STATES = {"MA": "Massachusetts", "TX": "Texas", "FL": "Florida", "NY": "New York", "NJ": "New Jersey", "CA": "California"}
 STATES.update({"PA": "Pennsylvania", "MI": "Michigan", "OH": "Ohio", "MO": "Missouri", "MD": "Maryland"})
@@ -179,11 +179,13 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(200, reviewed)
         elif path == '/api/contract-projection':
             query = parse_qs(url.query)
-            if query.get('player', [''])[0] != '00-0034857':
-                self.respond(404, {'error': 'The full-contract pilot is available for Josh Allen.'})
+            requested = query.get('player', [''])[0]
+            player = find_player(requested) or next((p for p in load_directory()['players'] if p.get('estimate_id') == requested), None)
+            if not player:
+                self.respond(404, {'error': 'Player not found in the 2025 directory.'})
                 return
             try:
-                result = project(calculate, query.get('residence', ['NY'])[0],
+                result = project_player(calculate, player['id'], query.get('residence', [player['home_state']])[0],
                                  query.get('filing', ['single'])[0],
                                  query.get('qualifying', ['0'])[0] == '1',
                                  int(query.get('travel_days', ['1'])[0]))

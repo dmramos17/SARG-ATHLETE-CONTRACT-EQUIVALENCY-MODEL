@@ -237,4 +237,37 @@ Josh Allen's tax page now has an **Entire contract · 2025–2030** view. The so
 
 Every year deliberately uses **frozen 2025 tax rules**, including deductions, payroll limits and selected local rates. No future-law or inflation forecast is implied. The default sources all cash as service wages, with an optional assumed qualifying residence-only treatment for the $56.745M 2025 signing bonus. Other bonus classifications remain unverified. Each year reports mean taxes/take-home across opponent scenarios. The six-year range sums annual extrema; it is an envelope, not a confidence interval or a guaranteed jointly achievable path. No discounting is applied. Unsupported taxes and other limitations of the annual model still apply. The full-contract view has its own explicit controls and does not inherit annual-page manual duty-day overrides.
 
-API: `/api/contract-projection?player=00-0034857&residence=NY&filing=single&qualifying=0&travel_days=1`. Other players retain the 2025 estimate until their complete contract cash schedules are reviewed.
+API: `/api/contract-projection?player=00-0034857&residence=NY&filing=single&qualifying=0&travel_days=1`. The league-wide extension below now supports every player, with explicit cash coverage notices.
+
+### League-wide entire-contract projections
+
+Every player tax page now offers **Entire contract**. The selected player's own cash history, team schedule, residence default and projection window replace the Allen-only pilot settings. Allen's reviewed six-year pilot remains intact. Other players use imported annual cash without inferring signing/option bonus cash from cap proration.
+
+The reproducible importer is `etl/projection_data.py`; runtime calculations live in `etl/league_projection.py`. `data/snapshots/contract_projections.json` contains the source metadata, player cash windows, published games and 32-team rotation slots. Runtime uses only local snapshots, with no network or Parquet/PDF dependencies. Import requirements add `pypdf` alongside `pyarrow`.
+
+```sh
+.venv/bin/python -m etl.projection_data \
+  --contracts /path/to/historical_contracts.parquet \
+  --fact-book /path/to/2024-Record-and-Fact-Book.pdf \
+  --scoreboard-dir /path/to/scoreboards
+```
+
+The scoreboard directory should contain ESPN calendar-year responses named `nfl-scoreboard-2020.json` through `nfl-scoreboard-2024.json`, `nfl-scoreboard-2026.json` and `nfl-scoreboard-2027.json`. The existing curated 2025 calendar is reused. Import checks complete regular seasons through 2026, including the canceled 2022 BUF–CIN game, excluding unannounced future postseason. Source fingerprints and timestamps are saved. PDF extraction normalizes known typography/spelling errors and validates all 32 teams' 2027–2030 rotation slot counts.
+
+The cash window starts at the reported signing year and ends at the later of the last positive reported cash year or the nominal signing-year-plus-term boundary. Extension effective years are not reliably supplied: **this window is not automatically a verified allocation of headline new money**. Headline value and reported guarantees appear separately. Usable cash is shown only when positively reported; missing/zero years remain uncalculated. Later-contract cash cannot fill a prior saved contract's years. Identical duplicate histories are collapsed, while ambiguous histories are not guessed. A complete displayed cash window is distinguished from a window that reconciles to headline value.
+
+For pre-2025 years, the team named in a unique annual cash-history row selects the published team schedule; uncertain multi-team years use the selected 2025 team and are identified as assumptions. 2025 retains the existing player-specific weekly-roster calendar. Future years assume the player stays with their selected 2025 team. Generic calendars use a July 23 camp and Tuesday off, with published venue exceptions retained. Rookie draft-year calendars omit January service. Published preseason/completed postseason are included; unknown future playoffs, practice camps outside the home state, joint practices and offseason service are excluded.
+
+The 2027–2030 opponent slots come from NFL Record & Fact Book pages 12–17. Later years extrapolate the current 17-game formula and home/away reversals at three-, four- and six-year rotation intervals; those fixtures are not announced schedules. Equivalent state/local duty-day allocations are compressed while retaining equal scenario weights. Opponent uncertainty is evaluated at the calendar-year boundary, including January games from the prior season once.
+
+All years, including historical years, use frozen 2025 tax rules. These are comparable-rule illustrations, **not actual historical tax returns or future-law forecasts**. Full scheduled cash assumes the payments are earned; release, injury, guarantee vesting, endorsements and incentives are not predicted. The annual model's state/local omissions remain. Missing years produce clearly labeled known-years subtotals, never apparent full-contract totals or zero-tax years.
+
+Import coverage on October 28, 2026: **2,257 matched players; 1,782 complete displayed cash windows and 475 partial windows**. A calculation sweep processed all 2,257 records with no errors; 2,184 have at least one calculable cash year. Complete-window counts do not certify legal contract boundaries or reconciliation to headline value.
+
+### Contract-only view and Allen residence comparison
+
+Tax pages now open directly to the entire-contract projection; the standalone 2025 estimate tab and its form are removed. The teammate selector remains available. Changing assumed residence recalculates automatically; advanced settings still use the update button.
+
+Josh Allen pilots a two-column comparison of reported cash, scenario-mean take-home and estimated taxes. New York is the fixed residence baseline, while each new residence selection replaces the second column. Both calculations use identical filing, bonus and travel assumptions. A new selection never appends a third state. Request sequencing prevents slow earlier responses from replacing the latest choice, and baseline responses are reused for unchanged assumptions. Other players retain the single-residence contract summary.
+
+The residence comparison now applies to every player. The baseline uses that player's existing team-practice-state residence assumption; each new residence selection replaces the second column automatically. Missing cash keeps both columns labeled as known-years subtotals and never produces a zero-income comparison. The update button now lives inside Advanced settings and applies the same filing, bonus and travel choices to both columns.
