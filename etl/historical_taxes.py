@@ -6,6 +6,8 @@ ROOT = Path(__file__).resolve().parents[1]
 FEDERAL_2025_SOURCE = 'https://www.irs.gov/instructions/i1040gi'
 
 def sync_historical_taxes(db=ROOT / 'athlete_tax.db'):
+    from etl.mlb_historical_taxes import sync_mlb_history
+    sync_mlb_history(db)
     with sqlite3.connect(db) as con:
         with (ROOT/'data/processed/state_income_tax_brackets_2025.csv').open() as stream:
             rows=list(csv.DictReader(stream))

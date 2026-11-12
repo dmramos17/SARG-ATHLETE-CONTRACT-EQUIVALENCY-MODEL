@@ -1,0 +1,382 @@
+{
+  "2015": {
+    "brackets": {
+      "single": [
+        0,
+        9225,
+        37450,
+        90750,
+        189300,
+        411500,
+        413200
+      ],
+      "mfj": [
+        0,
+        18450,
+        74900,
+        151200,
+        230450,
+        411500,
+        464850
+      ]
+    },
+    "rates": [
+      0.1,
+      0.15,
+      0.25,
+      0.28,
+      0.33,
+      0.35,
+      0.396
+    ],
+    "standard_deduction": {
+      "single": 6300,
+      "mfj": 12600
+    },
+    "ss_wage_base": 118500,
+    "source": "https://www.irs.gov/pub/irs-prior/i1040gi--2015.pdf",
+    "payroll_source": "https://www.ssa.gov/oact/cola/cbb.html"
+  },
+  "2016": {
+    "brackets": {
+      "single": [
+        0,
+        9275,
+        37650,
+        91150,
+        190150,
+        413350,
+        415050
+      ],
+      "mfj": [
+        0,
+        18550,
+        75300,
+        151900,
+        231450,
+        413350,
+        466950
+      ]
+    },
+    "rates": [
+      0.1,
+      0.15,
+      0.25,
+      0.28,
+      0.33,
+      0.35,
+      0.396
+    ],
+    "standard_deduction": {
+      "single": 6300,
+      "mfj": 12600
+    },
+    "ss_wage_base": 118500,
+    "source": "https://www.irs.gov/pub/irs-prior/i1040gi--2016.pdf",
+    "payroll_source": "https://www.ssa.gov/oact/cola/cbb.html"
+  },
+  "2017": {
+    "brackets": {
+      "single": [
+        0,
+        9325,
+        37950,
+        91900,
+        191650,
+        416700,
+        418400
+      ],
+      "mfj": [
+        0,
+        18650,
+        75900,
+        153100,
+        233350,
+        416700,
+        470700
+      ]
+    },
+    "rates": [
+      0.1,
+      0.15,
+      0.25,
+      0.28,
+      0.33,
+      0.35,
+      0.396
+    ],
+    "standard_deduction": {
+      "single": 6350,
+      "mfj": 12700
+    },
+    "ss_wage_base": 127200,
+    "source": "https://www.irs.gov/pub/irs-prior/i1040gi--2017.pdf",
+    "payroll_source": "https://www.ssa.gov/oact/cola/cbb.html"
+  },
+  "2018": {
+    "brackets": {
+      "single": [
+        0,
+        9525,
+        38700,
+        82500,
+        157500,
+        200000,
+        500000
+      ],
+      "mfj": [
+        0,
+        19050,
+        77400,
+        165000,
+        315000,
+        400000,
+        600000
+      ]
+    },
+    "rates": [
+      0.1,
+      0.12,
+      0.22,
+      0.24,
+      0.32,
+      0.35,
+      0.37
+    ],
+    "standard_deduction": {
+      "single": 12000,
+      "mfj": 24000
+    },
+    "ss_wage_base": 128400,
+    "source": "https://www.irs.gov/pub/irs-prior/i1040gi--2018.pdf",
+    "payroll_source": "https://www.ssa.gov/oact/cola/cbb.html"
+  },
+  "2019": {
+    "brackets": {
+      "single": [
+        0,
+        9700,
+        39475,
+        84200,
+        160725,
+        204100,
+        510300
+      ],
+      "mfj": [
+        0,
+        19400,
+        78950,
+        168400,
+        321450,
+        408200,
+        612350
+      ]
+    },
+    "rates": [
+      0.1,
+      0.12,
+      0.22,
+      0.24,
+      0.32,
+      0.35,
+      0.37
+    ],
+    "standard_deduction": {
+      "single": 12200,
+      "mfj": 24400
+    },
+    "ss_wage_base": 132900,
+    "source": "https://www.irs.gov/pub/irs-prior/i1040gi--2019.pdf",
+    "payroll_source": "https://www.ssa.gov/oact/cola/cbb.html"
+  },
+  "2020": {
+    "brackets": {
+      "single": [
+        0,
+        9875,
+        40125,
+        85525,
+        163300,
+        207350,
+        518400
+      ],
+      "mfj": [
+        0,
+        19750,
+        80250,
+        171050,
+        326600,
+        414700,
+        622050
+      ]
+    },
+    "rates": [
+      0.1,
+      0.12,
+      0.22,
+      0.24,
+      0.32,
+      0.35,
+      0.37
+    ],
+    "standard_deduction": {
+      "single": 12400,
+      "mfj": 24800
+    },
+    "ss_wage_base": 137700,
+    "source": "https://www.irs.gov/pub/irs-prior/i1040gi--2020.pdf",
+    "payroll_source": "https://www.ssa.gov/oact/cola/cbb.html"
+  },
+  "2021": {
+    "brackets": {
+      "single": [
+        0,
+        9950,
+        40525,
+        86375,
+        164925,
+        209425,
+        523600
+      ],
+      "mfj": [
+        0,
+        19900,
+        81050,
+        172750,
+        329850,
+        418850,
+        628300
+      ]
+    },
+    "rates": [
+      0.1,
+      0.12,
+      0.22,
+      0.24,
+      0.32,
+      0.35,
+      0.37
+    ],
+    "standard_deduction": {
+      "single": 12550,
+      "mfj": 25100
+    },
+    "ss_wage_base": 142800,
+    "source": "https://www.irs.gov/pub/irs-prior/i1040gi--2021.pdf",
+    "payroll_source": "https://www.ssa.gov/oact/cola/cbb.html"
+  },
+  "2022": {
+    "brackets": {
+      "single": [
+        0,
+        10275,
+        41775,
+        89075,
+        170050,
+        215950,
+        539900
+      ],
+      "mfj": [
+        0,
+        20550,
+        83550,
+        178150,
+        340100,
+        431900,
+        647850
+      ]
+    },
+    "rates": [
+      0.1,
+      0.12,
+      0.22,
+      0.24,
+      0.32,
+      0.35,
+      0.37
+    ],
+    "standard_deduction": {
+      "single": 12950,
+      "mfj": 25900
+    },
+    "ss_wage_base": 147000,
+    "source": "https://www.irs.gov/pub/irs-prior/i1040gi--2022.pdf",
+    "payroll_source": "https://www.ssa.gov/oact/cola/cbb.html"
+  },
+  "2023": {
+    "brackets": {
+      "single": [
+        0,
+        11000,
+        44725,
+        95375,
+        182100,
+        231250,
+        578125
+      ],
+      "mfj": [
+        0,
+        22000,
+        89450,
+        190750,
+        364200,
+        462500,
+        693750
+      ]
+    },
+    "rates": [
+      0.1,
+      0.12,
+      0.22,
+      0.24,
+      0.32,
+      0.35,
+      0.37
+    ],
+    "standard_deduction": {
+      "single": 13850,
+      "mfj": 27700
+    },
+    "ss_wage_base": 160200,
+    "source": "https://www.irs.gov/pub/irs-prior/i1040gi--2023.pdf",
+    "payroll_source": "https://www.ssa.gov/oact/cola/cbb.html"
+  },
+  "2024": {
+    "brackets": {
+      "single": [
+        0,
+        11600,
+        47150,
+        100525,
+        191950,
+        243725,
+        609350
+      ],
+      "mfj": [
+        0,
+        23200,
+        94300,
+        201050,
+        383900,
+        487450,
+        731200
+      ]
+    },
+    "rates": [
+      0.1,
+      0.12,
+      0.22,
+      0.24,
+      0.32,
+      0.35,
+      0.37
+    ],
+    "standard_deduction": {
+      "single": 14600,
+      "mfj": 29200
+    },
+    "ss_wage_base": 168600,
+    "source": "https://www.irs.gov/pub/irs-prior/i1040gi--2024.pdf",
+    "payroll_source": "https://www.ssa.gov/oact/cola/cbb.html"
+  }
+}

@@ -253,6 +253,9 @@ def resident_tax(t: TaxTables, state: str, income: float) -> float:
 
 
 def state_base_tax(t: TaxTables, state: str, income: float) -> float:
+    if state=='OH' and 2020<=t.year<=2024:
+        from etl.mlb_historical_taxes import ohio_tax
+        return ohio_tax(t.year,income)
     if t.year == 2025 and state == 'OH':
         # Ohio's published schedule has base amounts that marginal slices alone
         # cannot reproduce. See ORC 5747.02(A)(3)(b).

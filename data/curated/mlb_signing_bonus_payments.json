@@ -1,0 +1,16 @@
+{
+  "666182": {
+    "contract_id": 5937,
+    "headline_value": 126000000,
+    "start_year": 2026,
+    "end_year": 2028,
+    "payments": [{"year": 2026, "amount": 40000000, "payment_date": "2026-03-15"}],
+    "exercised_options": [2027],
+    "sources": [
+      {"name": "Associated Press: Bichette contract and March 15 signing-bonus payment", "url": "https://www.timesunion.com/sports/article/bo-bichette-and-new-york-mets-finalize-126-21306151.php"},
+      {"name": "New York Mets: three-year contract with 2027/2028 player options", "url": "https://www.mlb.com/amp/press-release/mets-sign-two-time-all-star-bo-bichette.html"},
+      {"name": "MLB: Bichette exercises his 2027 player option", "url": "https://www.mlb.com/news/bo-bichette-player-option-mets"}
+    ],
+    "accessed_date": "2026-11-12"
+  }
+}

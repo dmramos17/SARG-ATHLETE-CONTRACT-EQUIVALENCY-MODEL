@@ -37,9 +37,10 @@ class MlbContractData(unittest.TestCase):
         self.assertTrue(all(r['reported_cash']==40000000 for r in c['annual']))
         self.assertIsNone(c['signing_bonus']) # N/A is not a verified zero-dollar signing bonus.
 
-    def test_contract_data_does_not_enable_unbuilt_tax_model(self):
-        for player in self.players.values():
-            self.assertEqual(player['tax_status'],'coming_soon')
+    def test_contract_snapshots_remain_separate_from_provisional_tax_results(self):
+        for identity in ('660271','592450','665742'):
+            player=self.players[identity]
+            self.assertEqual(player['tax_status'],'provisional')
             self.assertEqual(player['contract_status'],'reported_snapshot')
             self.assertTrue(player['contract']['source_url'].startswith('https://www.spotrac.com/mlb/player/'))
             self.assertNotIn('estimated_tax',player['contract'])

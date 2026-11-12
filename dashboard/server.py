@@ -19,6 +19,9 @@ from etl.player_directory import load_directory, search_players, find_player
 from etl.player_tax import tax_contract, with_tax_info
 from etl.league_projection import project_player
 from etl.mlb_interface import catalog as mlb_catalog
+from etl.mlb_model import estimate as mlb_estimate
+from etl.mlb_projection import project as mlb_project
+from etl.player_comparison import directory as comparison_directory, suggestions as comparison_suggestions, compare as compare_players
 
 STATES = {"MA": "Massachusetts", "TX": "Texas", "FL": "Florida", "NY": "New York", "NJ": "New Jersey", "CA": "California"}
 STATES.update({"PA": "Pennsylvania", "MI": "Michigan", "OH": "Ohio", "MO": "Missouri", "MD": "Maryland"})
@@ -35,8 +38,8 @@ LOCALITIES = {"NYC": ("New York City", "NY"), "PHL": ("Philadelphia", "PA"),
 
 def calculate(data):
     year = data.get("tax_year", 2026)
-    if type(year) is not int or year not in (2025, 2026):
-        raise ValueError("Choose tax year 2025 or 2026.")
+    if type(year) is not int or year not in range(2015,2027):
+        raise ValueError("Choose a supported tax year from 2015 through 2026.")
     residence = data.get("residence")
     if residence not in STATES:
         raise ValueError("Choose one of the supported residence states.")
@@ -118,7 +121,8 @@ def calculate(data):
                  "total_sourced": allocation.sourced.get(s, 0),
                  "nonresident_tax": tax["nonresident"].get(s, 0),
                  "is_residence": s == residence} for s, n in counts.items()]
-        sources = [dict(state="Federal", status="verified", source=FEDERAL_2025_SOURCE if year == 2025 else FEDERAL_SOURCE)]
+        federal_source=f'https://www.irs.gov/pub/irs-prior/i1040gi--{year}.pdf' if year<2025 else FEDERAL_2025_SOURCE if year==2025 else FEDERAL_SOURCE
+        sources = [dict(state="Federal", status="provisional" if year<2025 else "verified", source=federal_source)]
         sources += [dict(state="Payroll", status="verified", source=url) for url in PAYROLL_SOURCES]
         sources += local["sources"]
         for state in sorted(set(counts) | {residence}):
@@ -213,8 +217,26 @@ class Handler(BaseHTTPRequestHandler):
         elif path.startswith('/api/players/'):
             player = find_player(path.removeprefix('/api/players/'))
             self.respond(200 if player else 404, with_tax_info(player) if player else {'error': 'Player not found in the 2025 directory.'})
+        elif path in ('/api/compare/directory', '/api/compare/suggestions', '/api/compare'):
+            query=parse_qs(url.query)
+            try:
+                league=query.get('league',['NFL'])[0].upper()
+                if path.endswith('/directory'):result={'players':comparison_directory(league)}
+                elif path.endswith('/suggestions'):result={'players':comparison_suggestions(league,query.get('player',[''])[0])}
+                else:result=compare_players(calculate,league,query.get('left',[''])[0],query.get('right',[''])[0])
+                self.respond(200,result)
+            except (ValueError,TypeError) as error:self.respond(400,{'error':str(error)})
+        elif path == '/compare':
+            self.respond(200,Path(__file__).with_name('compare.html').read_bytes(),'text/html; charset=utf-8')
         elif path == '/api/mlb/directory':
             self.respond(200, mlb_catalog())
+        elif path in ('/api/mlb/taxes', '/api/mlb/projection'):
+            query=parse_qs(url.query)
+            try:
+                result=(mlb_project if path.endswith('/projection') else mlb_estimate)(calculate,query.get('player',[''])[0],query.get('residence',[''])[0],query.get('filing',['single'])[0],**({'full':query.get('scope',['future'])[0]=='full'} if path.endswith('/projection') else {}))
+                self.respond(200,result)
+            except (ValueError,TypeError) as error:
+                self.respond(400,{'error':str(error)})
         elif path in ('/mlb', '/mlb/') or path.startswith('/mlb/players/'):
             self.respond(200, Path(__file__).with_name('mlb.html').read_bytes(), 'text/html; charset=utf-8')
         elif path in ("/", "/index.html"):
@@ -223,7 +245,7 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(200, Path(__file__).with_name('player.html').read_bytes(), 'text/html; charset=utf-8')
         elif path.startswith('/taxes/') and (path.removeprefix('/taxes/') in {r['id'] for r in load_contracts()} or find_player(path.removeprefix('/taxes/'))):
             self.respond(200, Path(__file__).with_name('tax.html').read_bytes(), 'text/html; charset=utf-8')
-        elif path in ('/styles.css', '/home.js', '/player.js', '/common.js', '/projection.js', '/mlb.js', '/mlb.css'):
+        elif path in ('/tax-breakdown.js', '/tax-breakdown.css', '/compare.js', '/compare.css', '/styles.css', '/home.js', '/player.js', '/common.js', '/projection.js', '/mlb.js', '/mlb.css'):
             kind = 'text/css' if path.endswith('.css') else 'text/javascript'
             self.respond(200, Path(__file__).with_name(path[1:]).read_bytes(), kind+'; charset=utf-8')
         else:

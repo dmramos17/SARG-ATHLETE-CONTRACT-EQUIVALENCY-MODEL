@@ -125,7 +125,7 @@ def coverage(player_id):
     return dict(year_start=row['cash'][0]['year'],year_end=row['cash'][-1]['year'],missing_years=row['missing_years'],reconciles_headline=row['reconciles_headline'])
 
 @lru_cache(maxsize=128)
-def project_player(calculate,player_id,residence=None,filing='single',qualifying=False,travel_days=1):
+def _project_player(calculate,player_id,residence=None,filing='single',qualifying=False,travel_days=1):
     player=find_player(player_id)
     if not player:raise ValueError('Player not found in the 2025 directory.')
     if type(travel_days) is not int or not 0<=travel_days<=3:raise ValueError('Travel days must be 0–3.')
@@ -194,3 +194,20 @@ def project_player(calculate,player_id,residence=None,filing='single',qualifying
             'Unknown away opponents are independently equally weighted among the four teams in the specified division. Results are scenario means. Ranges sum annual extrema and are scenario envelopes, not confidence intervals or assured achievable contract paths.',
             'Reported season cash approximates calendar-year wages. Exact payment timing is unverified; local payment halves assume uniform cash over modeled duty dates. State credit/deduction simplifications and unsupported local, county, foreign and state payroll taxes remain excluded. No residence-city tax is assumed.'
         ]+contract['notes'])
+
+
+@lru_cache(maxsize=128)
+def project_player(calculate,player_id,residence=None,filing='single',qualifying=False,travel_days=1):
+    from etl.nfl_history import contract_history
+    result = dict(_project_player(calculate,player_id,residence,filing,qualifying,travel_days))
+    gross=result['gross']; headline=result.get('headline_value')
+    result['headline_gap']=headline-gross if headline is not None and gross is not None else None
+    result['headline_reconciled']=result['headline_gap'] is not None and abs(result['headline_gap'])<=1
+    result['coverage_complete']=result['complete'] and result['headline_reconciled']
+    issues=[]
+    if result['missing_years']:issues.append('Annual cash is missing or unusable for '+', '.join(map(str,result['missing_years']))+'. Those years are excluded.')
+    if gross is not None and not result['headline_reconciled']:
+        issues.append(f'Modeled cash ${gross:,.0f} does not reconcile to the reported headline value; the difference is not a tax charge. Take-home covers modeled cash only.')
+    result['coverage_issues']=issues
+    result['history'] = contract_history(calculate,player_id,result['residence'],filing,qualifying,travel_days)
+    return result

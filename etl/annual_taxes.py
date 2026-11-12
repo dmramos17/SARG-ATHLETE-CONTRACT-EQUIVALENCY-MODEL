@@ -27,7 +27,9 @@ def federal_payroll(tables, wages):
         raise ValueError("Federal tax data is missing for this year or filing status.")
     deduction, threshold = filing
     ss_rate, ss_base, medicare_rate, additional_rate = params
-    taxable = max(0, wages - deduction)
+    from etl.mlb_historical_taxes import personal_exemption
+    exemption=personal_exemption(tables.year,tables.fs,wages)
+    taxable = max(0, wages - deduction - exemption)
     slices = []
     for index, (low, rate) in enumerate(brackets):
         upper = brackets[index + 1][0] if index + 1 < len(brackets) else taxable
@@ -40,7 +42,7 @@ def federal_payroll(tables, wages):
     payroll["total"] = sum(payroll.values())
     return dict(federal=bracket_tax(brackets, taxable), deduction=deduction,
                 taxable_income=taxable, brackets=slices, payroll=payroll,
-                social_security_base=ss_base, additional_medicare_threshold=threshold)
+                personal_exemption=exemption,social_security_base=ss_base, additional_medicare_threshold=threshold)
 
 
 def local_rates(tables, locality, date):

@@ -1,3 +1,4 @@
+function projectionCoverageComplete(out){return out.coverage_complete??out.complete;}
 let projectionRequest=0;
 let projectionPlayer=null;
 // Residence choices use 2025 NFL stadium and practice states from teams.csv.
@@ -17,10 +18,10 @@ function renderComparison(out,baseline){
  const baselineName=states[baseline.residence];
  const different=out.residence!==baseline.residence;
  $('baseline-state').textContent=baselineName;
- $('comparison-explanation').textContent=baselineName+' stays as the team-based residence baseline. Picking a state replaces the comparison column. Both columns use the same advanced settings.'+(out.complete?'':' Only known cash years are included in both columns.');
- $('comparison-cash-label').textContent=out.complete?'Reported cash window':'Known-years cash subtotal';
- $('comparison-net-label').textContent=out.complete?'Estimated take-home · scenario mean':'Known-years take-home subtotal';
- $('comparison-tax-label').textContent=out.complete?'Estimated taxes':'Known-years tax subtotal';
+ $('comparison-explanation').textContent=baselineName+' stays as the team-based residence baseline. Picking a state replaces the comparison column. Both columns use the same advanced settings.'+(projectionCoverageComplete(out)?'':' Only known cash years are included in both columns.');
+ $('comparison-cash-label').textContent=projectionCoverageComplete(out)?'Reported cash window':'Modeled cash subtotal';
+ $('comparison-net-label').textContent=projectionCoverageComplete(out)?'Estimated take-home · scenario mean':'Take-home · modeled income only';
+ $('comparison-tax-label').textContent=projectionCoverageComplete(out)?'Estimated taxes':'Taxes · modeled income only';
  $('comparison-state').textContent=different?states[out.residence]+' · comparison':'Choose another state';
  for(const [suffix,key] of [['cash','gross'],['net','remaining'],['tax','total_tax']]){
   $('baseline-'+suffix).textContent=money(baseline[key]);
@@ -31,6 +32,7 @@ function renderComparison(out,baseline){
 }
 function configureProjection(row){
  projectionRequest++;projectionPlayer=row;
+ $('compare-player-link').href='/compare?league=NFL&player='+encodeURIComponent(row.player_id);
  $('open-contract-info').href='/players/'+encodeURIComponent(row.player_id);
  $('projection-output').hidden=true;
  $('projection-coverage').textContent='';$('projection-headline').textContent='';
@@ -57,15 +59,17 @@ async function loadProjection(){
   const [out,baseline]=await Promise.all([selected,fetchProjection(baselineQuery)]);
   if(request!==projectionRequest)return;
   renderComparison(out,baseline);
+  TaxBreakdown.render($('projection-tax-breakdown'),[{name:states[baseline.residence]+' · Base state',result:baseline,grossKey:'gross'},...(out.residence!==baseline.residence?[{name:states[out.residence]+' · Comparison state',result:out,grossKey:'gross'}]:[])]);
+  renderContractHistory(out,baseline);
   $('projection-annual-caption').textContent='Annual contract projection · '+states[out.residence]+' residence · 2025 tax rules held constant';
-  $('projection-total-label').textContent=out.total_label;
-  $('projection-tax-label').textContent=out.complete?'Estimated taxes':'Known-years tax subtotal';
-  $('projection-net-label').textContent=out.complete?'Estimated take-home · scenario mean':'Known-years take-home subtotal';
-  $('projection-coverage').hidden=out.complete;
-  $('projection-coverage').textContent=out.complete?'':'Partial projection: cash is missing or unusable for '+out.missing_years.join(', ')+'. Totals include known years only.';
+  $('projection-total-label').textContent=projectionCoverageComplete(out)?out.total_label:'Modeled cash subtotal';
+  $('projection-tax-label').textContent=projectionCoverageComplete(out)?'Estimated taxes':'Taxes · modeled income only';
+  $('projection-net-label').textContent=projectionCoverageComplete(out)?'Estimated take-home · scenario mean':'Take-home · modeled income only';
+  $('projection-coverage').hidden=projectionCoverageComplete(out);
+  $('projection-coverage').textContent=projectionCoverageComplete(out)?'':'Partial-contract estimate: '+(out.coverage_issues||[]).join(' ');
   $('projection-headline').textContent='Reported headline value: '+money(out.headline_value)+' · Cash window: '+out.year_start+'–'+out.year_end+'. '+(out.coverage_notes||[]).join(' ');
   $('projection-gross').textContent=money(out.gross);$('projection-net').textContent=money(out.remaining);$('projection-tax').textContent=money(out.total_tax);
-  $('projection-range').textContent=out.remaining==null?'Annual cash is needed before a tax total can be calculated.':(out.complete?'Schedule-based take-home range: ':'Known-years take-home range: ')+money(out.low_remaining)+' – '+money(out.high_remaining);
+  $('projection-range').textContent=out.remaining==null?'Annual cash is needed before a tax total can be calculated.':(projectionCoverageComplete(out)?'Schedule-based take-home range: ':'Known-years take-home range: ')+money(out.low_remaining)+' – '+money(out.high_remaining);
   $('projection-guarantees').textContent=out.fully_guaranteed_at_signing==null?'Reported guarantees: '+money(out.reported_guarantees)+'. Guarantee type and vesting are not independently verified. Scheduled or historical cash is not necessarily guaranteed.':'Reported at signing: '+money(out.fully_guaranteed_at_signing)+' fully guaranteed; '+money(out.reported_total_guarantees)+' total guarantees, including conditional/vesting amounts. The '+money(out.gross)+' scheduled total is not all fully guaranteed.';
   for(const id of ['projection-years','projection-cash','projection-opponents','projection-notes','projection-sources'])$(id).replaceChildren();
   for(const year of out.annual){
@@ -85,3 +89,30 @@ async function loadProjection(){
 }
 
 fetchContracts();
+
+function renderContractHistory(out,baseline){
+ const history=out.history,base=baseline.history;
+ const root=$('contract-history-output');root.replaceChildren();
+ if(!history){text(root,'p','Historical contract information is unavailable.');return;}
+ text(root,'p','Reported contract start '+history.year_start+' · cash window through '+history.year_end+'. Each year uses its own tax rules. This is separate from the unchanged full-contract forecast; do not add the two totals together.');
+ const wrap=text(root,'div','');wrap.className='table-wrap';
+ const table=text(wrap,'table','');const head=text(table,'thead','');const headers=text(head,'tr','');
+ for(const v of ['Included years only',states[base.residence]+' · Base State',out.residence===base.residence?'Choose another state':states[out.residence]+' · comparison'])text(headers,'th',v);
+ const body=text(table,'tbody','');
+ for(const [label,key] of [['Reported cash','gross'],['Estimated take-home','remaining'],['Estimated taxes','total_tax']]){
+  const row=text(body,'tr','');text(row,'th',label);text(row,'td',money(base[key]));text(row,'td',out.residence===base.residence?'—':money(history[key]));
+ }
+ text(root,'p','Included years: '+(history.included_years.join(', ')||'None')+'.'+(history.excluded_years.length?' Excluded years: '+history.excluded_years.join(', ')+'.':''));
+ const annualWrap=text(root,'div','');annualWrap.className='table-wrap';
+ const annual=text(annualWrap,'table','');text(annual,'caption','Contract start through 2026 · '+states[out.residence]+' residence · year-specific tax rules');
+ const annualHead=text(text(annual,'thead',''),'tr','');
+ for(const v of ['Year','Reported team','Cash','Federal','Payroll','State','Selected local','Take-home','Coverage'])text(annualHead,'th',v);
+ const annualBody=text(annual,'tbody','');
+ for(const year of history.annual){
+  const row=text(annualBody,'tr','');
+  for(const v of [year.year,year.team||'Unverified',money(year.cash),...['federal','payroll','state'].map(k=>year.status==='estimated'?money(year[k]):'Unavailable'),year.status!=='estimated'?'Unavailable':year.local_supported?money(year.local):'Not modeled',year.status==='estimated'?money(year.remaining):'Unavailable',year.reason||year.duty_days+' modeled duty days'])text(row,'td',v);
+ }
+ const details=text(root,'details','');text(details,'summary','Historical assumptions & sources');
+ history.notes.forEach(n=>text(details,'p',n));
+ for(const source of history.sources){if(!source.url)continue;const a=text(text(details,'p',''),'a',source.name);a.href=source.url;a.target='_blank';a.rel='noopener noreferrer';}
+}

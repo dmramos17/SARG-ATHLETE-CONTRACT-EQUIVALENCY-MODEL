@@ -15,4 +15,7 @@
 #projection-status:empty,#comparison-difference:empty{display:none}
 
 .contract-info-link{display:inline-flex;align-items:center;justify-content:center;margin:12px 0 24px;padding:12px 20px;border:1px solid #304b68;border-radius:6px;background:#172d46;color:#fff;text-decoration:none;font-weight:750;font-size:.9rem}.contract-info-link:hover{background:#254360}
-header nav .league-link{border:1px solid #40536b;padding:6px 10px;border-radius:4px;font-size:.72rem;font-weight:800}header nav .league-link[aria-current=true]{color:#ffb18a;background:#38271f;border-color:#a95e3b}header nav{flex-wrap:wrap}
+header nav{flex-wrap:wrap}
+
+/* Shared plain-text navigation across every page. */
+header nav{display:flex;align-items:center;gap:24px;margin-left:auto;flex-wrap:wrap}header nav a,header nav a[aria-current]{color:#bec9d9;text-decoration:none;font-size:.94rem;font-weight:500;border:0;background:none;padding:0;border-radius:0}header nav a:hover{color:#fff}header>.season{white-space:nowrap;margin-left:8px}header .brand{flex-shrink:0}@media(max-width:700px){header{flex-wrap:wrap}header nav{margin-left:0;gap:20px}header>.season{display:flex;margin-left:0;font-size:.65rem}header .brand{width:100%}}
