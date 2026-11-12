@@ -32,7 +32,6 @@
   add(container,'h3','Where modeled income goes');
   add(container,'p','Whole included contract window, not one year. Each bar represents 100% of modeled income—not the headline value. Hover, tap, or use Tab and Enter to explore.','tax-breakdown-intro');
   const data=series.map(s=>({...s,data:summarize(s.result,s.grossKey)}));
-  const legend=add(container,'div','','tax-breakdown-legend');legend.setAttribute('aria-label','Tax breakdown categories');
   const body=add(container,'div','','tax-breakdown-bars');
   const detail=add(container,'div','','tax-breakdown-detail');detail.setAttribute('role','status');detail.setAttribute('aria-live','polite');
   let pinned=null;const buttons=[];
@@ -49,9 +48,6 @@
    button.addEventListener('mouseenter',()=>show(key,rowIndex));button.addEventListener('focus',()=>show(key,rowIndex));
    button.addEventListener('mouseleave',()=>{if(pinned)show(pinned.key,pinned.rowIndex);});
    button.addEventListener('click',()=>{pinned={key,rowIndex};show(key,rowIndex);});
-  }
-  for(const part of parts){
-   const button=add(legend,'button','','tax-breakdown-key');const dot=add(button,'span','','tax-breakdown-swatch');dot.style.background=part.color;dot.setAttribute('aria-hidden','true');add(button,'span',part.label);interactive(button,part.key,null);
   }
   data.forEach((row,index)=>{
    const section=add(body,'section','','tax-breakdown-row');section.setAttribute('aria-label',row.name+' tax breakdown');
