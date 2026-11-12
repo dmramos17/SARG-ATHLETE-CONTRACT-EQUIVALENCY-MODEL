@@ -245,7 +245,7 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(200, Path(__file__).with_name('player.html').read_bytes(), 'text/html; charset=utf-8')
         elif path.startswith('/taxes/') and (path.removeprefix('/taxes/') in {r['id'] for r in load_contracts()} or find_player(path.removeprefix('/taxes/'))):
             self.respond(200, Path(__file__).with_name('tax.html').read_bytes(), 'text/html; charset=utf-8')
-        elif path in ('/tax-breakdown.js', '/tax-breakdown.css', '/compare.js', '/compare.css', '/styles.css', '/home.js', '/player.js', '/common.js', '/projection.js', '/mlb.js', '/mlb.css'):
+        elif path in ('/tax-breakdown.js', '/tax-breakdown.css', '/compare.js', '/compare.css', '/styles.css', '/home.js', '/player.js', '/common.js', '/projection.js', '/mlb.js', '/mlb.css', '/charts.js', '/charts.css'):
             kind = 'text/css' if path.endswith('.css') else 'text/javascript'
             self.respond(200, Path(__file__).with_name(path[1:]).read_bytes(), kind+'; charset=utf-8')
         else:
