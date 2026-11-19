@@ -16,6 +16,7 @@ import json
 from pathlib import Path
 import re
 import unicodedata
+from etl.recent_contracts import recent_contracts
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / 'data/snapshots/nfl_players_2025.json'
@@ -120,8 +121,7 @@ def build_directory(rosters, contract_rows, reviewed, teams, accessed_date):
     players.sort(key=lambda p: normalize(p['name']))
     if len({p['id'] for p in players}) != len(players):
         raise ValueError('Duplicate player identity.')
-    featured = sorted([p for p in players if p['contract'] and p['contract']['year_signed'] == 2025 and p['contract']['total_value']],
-                      key=lambda p:p['contract']['total_value'],reverse=True)[:6]
+    recent=recent_contracts([dict(id=p['id'],value=p['contract']['total_value'],signing_year=p['contract']['year_signed']) for p in players if p['contract']])
     return dict(metadata=dict(season=2025,accessed_date=accessed_date,roster_definition='Players with ACT or INA status in at least one 2025 regular-season weekly roster. Includes later injured, released and traded players; not a single-date 53-man roster.',
                               player_count=len(players),team_count=len({t for p in players for t in p['teams']}),
                               contract_count=sum(p['contract'] is not None for p in players),
@@ -129,13 +129,17 @@ def build_directory(rosters, contract_rows, reviewed, teams, accessed_date):
                               estimate_count=sum(p['estimate_id'] is not None for p in players),
                               contract_units='Source Parquet amounts are millions of USD; stored amounts are USD.',
                               sources=[ROSTER_SOURCE,CONTRACT_SOURCE],
-                              featured_definition='Largest reported total contract values among matched contracts signed in 2025; signing dates within the year are not supplied.'),
-                featured_ids=[p['id'] for p in featured],players=players)
+                              featured_definition=recent['definition'],recent_start_year=recent['start_year'],recent_end_year=recent['end_year']),
+                featured_ids=recent['ids'],players=players)
 
 
 @lru_cache(maxsize=1)
 def load_directory():
-    return json.loads(DATA.read_text())
+    result=json.loads(DATA.read_text())
+    recent=recent_contracts([dict(id=p['id'],value=p['contract']['total_value'],signing_year=p['contract']['year_signed']) for p in result['players'] if p['contract']])
+    result['featured_ids']=recent['ids']
+    result['metadata'].update(featured_definition=recent['definition'],recent_start_year=recent['start_year'],recent_end_year=recent['end_year'])
+    return result
 
 
 def summary(player):

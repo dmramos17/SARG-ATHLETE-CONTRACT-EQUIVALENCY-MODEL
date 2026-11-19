@@ -64,7 +64,7 @@
    }
    const labels=add(section,'div','','tax-breakdown-percentages');labels.setAttribute('aria-label',row.name+' category percentages');
    for(const part of parts){const label=add(labels,'button','','tax-breakdown-percentage');const swatch=add(label,'span','','tax-breakdown-swatch');swatch.style.background=part.color;swatch.setAttribute('aria-hidden','true');add(label,'span',part.label);add(label,'strong',percent(row.data.percentages[part.key]));interactive(label,part.key,index);}
-   const coverage=add(section,'p',row.data.complete?'Covers the headline-reconciled modeled contract window.':'Partial-contract estimate: only included income and years are represented.','tax-breakdown-coverage');
+   const coverage=add(section,'p',row.coverage_text||(row.data.complete?'Covers the headline-reconciled modeled contract window.':'Partial-contract estimate: only included income and years are represented.'),'tax-breakdown-coverage');
    if(row.data.localOmitted)coverage.append(' Local taxes before 2025 are not modeled and are excluded.');
   });
   show('remaining',null);

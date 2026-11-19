@@ -43,7 +43,7 @@ class PlayerDirectory(unittest.TestCase):
                                                   contract('a','Player One',signed=2026,value=200)])
         self.assertEqual(data['players'][0]['contract']['year_signed'],2024)
         self.assertEqual(data['players'][0]['contract']['total_value'],20000000)
-        self.assertEqual(data['featured_ids'],[])
+        self.assertEqual(data['featured_ids'],['a'])  # The valid 2024 deal is now a recent contract.
 
     def test_dollar_conversion_keeps_cash_distinct_from_cap(self):
         data=self.build([roster('a','Player One')],[contract('a','Player One')])

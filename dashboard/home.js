@@ -26,10 +26,10 @@ $('player-search-form').addEventListener('submit',event=>{event.preventDefault()
 document.addEventListener('click',event=>{if(!$('player-search-form').contains(event.target))closeSuggestions();});
 async function loadHome(){
  try{const response=await fetch('/api/directory');if(!response.ok)throw new Error('The contract cards could not be loaded. You can still try the player search.');const data=await response.json();const metadata=data.metadata;
- $('player-count').textContent=metadata.player_count.toLocaleString();$('team-count').textContent=metadata.team_count;$('cash-count').textContent=metadata.cash_count.toLocaleString();
+ $('recent-contract-period').textContent=metadata.recent_start_year?'Largest reported deals · '+metadata.recent_start_year+'–'+metadata.recent_end_year:'Recent reported signings';
  for(const player of data.featured)$('recent-contracts').append(contractCard(player,'contract'));
  $('coverage-description').textContent=metadata.roster_definition+' Estimates are prefilled for '+metadata.estimate_count.toLocaleString()+' players; '+metadata.cash_required_count+' require verified cash input.';
- $('snapshot-date').textContent='Source files accessed '+metadata.accessed_date+'. Contract source update: '+metadata.contract_source_timestamp+'. Cards show the largest matched deals signed in 2025, not a real-time transaction feed.';
+ $('snapshot-date').textContent='Source files accessed '+metadata.accessed_date+'. Contract source update: '+metadata.contract_source_timestamp+'. Cards show large deals from recent signing years in the saved roster, not a real-time transaction feed.';
  for(const [index,url] of metadata.sources.entries()){const p=text($('directory-sources'),'p','');sourceLink(p,index===0?'nflverse weekly roster data':'nflverse contract data from OverTheCap',url);}
  }catch(error){$('directory-error').textContent=error.message;}finally{$('recent-contracts').setAttribute('aria-busy','false');}
 }

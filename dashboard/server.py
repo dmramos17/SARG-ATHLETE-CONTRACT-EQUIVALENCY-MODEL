@@ -21,6 +21,7 @@ from etl.league_projection import project_player
 from etl.mlb_interface import catalog as mlb_catalog
 from etl.mlb_model import estimate as mlb_estimate
 from etl.mlb_projection import project as mlb_project
+from etl.offer_lab import catalog as offer_catalog, run as run_offer_lab
 from etl.player_comparison import directory as comparison_directory, suggestions as comparison_suggestions, compare as compare_players
 
 STATES = {"MA": "Massachusetts", "TX": "Texas", "FL": "Florida", "NY": "New York", "NJ": "New Jersey", "CA": "California"}
@@ -226,6 +227,10 @@ class Handler(BaseHTTPRequestHandler):
                 else:result=compare_players(calculate,league,query.get('left',[''])[0],query.get('right',[''])[0])
                 self.respond(200,result)
             except (ValueError,TypeError) as error:self.respond(400,{'error':str(error)})
+        elif path == '/api/offers/catalog':
+            self.respond(200,offer_catalog())
+        elif path == '/offers':
+            self.respond(200,Path(__file__).with_name('offers.html').read_bytes(),'text/html; charset=utf-8')
         elif path == '/compare':
             self.respond(200,Path(__file__).with_name('compare.html').read_bytes(),'text/html; charset=utf-8')
         elif path == '/api/mlb/directory':
@@ -245,14 +250,14 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(200, Path(__file__).with_name('player.html').read_bytes(), 'text/html; charset=utf-8')
         elif path.startswith('/taxes/') and (path.removeprefix('/taxes/') in {r['id'] for r in load_contracts()} or find_player(path.removeprefix('/taxes/'))):
             self.respond(200, Path(__file__).with_name('tax.html').read_bytes(), 'text/html; charset=utf-8')
-        elif path in ('/tax-breakdown.js', '/tax-breakdown.css', '/compare.js', '/compare.css', '/styles.css', '/home.js', '/player.js', '/common.js', '/projection.js', '/mlb.js', '/mlb.css', '/charts.js', '/charts.css'):
+        elif path in ('/tax-breakdown.js', '/tax-breakdown.css', '/compare.js', '/compare.css', '/styles.css', '/home.js', '/player.js', '/common.js', '/projection.js', '/mlb.js', '/mlb.css', '/offers.js', '/offers.css', '/charts.js', '/charts.css'):
             kind = 'text/css' if path.endswith('.css') else 'text/javascript'
             self.respond(200, Path(__file__).with_name(path[1:]).read_bytes(), kind+'; charset=utf-8')
         else:
             self.respond(404, {"error": "Not found"})
 
     def do_POST(self):
-        if self.path not in ("/api/calculate", "/api/duty-days"):
+        if self.path not in ("/api/calculate", "/api/duty-days", "/api/offers"):
             self.respond(404, {"error": "Not found"})
             return
         try:
@@ -262,7 +267,9 @@ class Handler(BaseHTTPRequestHandler):
             data = json.loads(self.rfile.read(length))
             if not isinstance(data, dict):
                 raise ValueError("Expected calculation inputs.")
-            if self.path == "/api/duty-days":
+            if self.path == "/api/offers":
+                result=run_offer_lab(calculate,data)
+            elif self.path == "/api/duty-days":
                 player = find_player(data['player_id']) if data.get('player_id') else None
                 if data.get('player_id') and not player:
                     raise ValueError('Player membership record not found.')
