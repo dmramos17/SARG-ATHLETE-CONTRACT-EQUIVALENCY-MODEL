@@ -22,6 +22,7 @@ from etl.mlb_interface import catalog as mlb_catalog
 from etl.mlb_model import estimate as mlb_estimate
 from etl.mlb_projection import project as mlb_project
 from etl.offer_lab import catalog as offer_catalog, run as run_offer_lab
+from etl.offer_rank import rank as rank_offer_teams
 from etl.player_comparison import directory as comparison_directory, suggestions as comparison_suggestions, compare as compare_players
 
 STATES = {"MA": "Massachusetts", "TX": "Texas", "FL": "Florida", "NY": "New York", "NJ": "New Jersey", "CA": "California"}
@@ -257,7 +258,7 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(404, {"error": "Not found"})
 
     def do_POST(self):
-        if self.path not in ("/api/calculate", "/api/duty-days", "/api/offers"):
+        if self.path not in ("/api/calculate", "/api/duty-days", "/api/offers", "/api/offers/rank"):
             self.respond(404, {"error": "Not found"})
             return
         try:
@@ -267,7 +268,9 @@ class Handler(BaseHTTPRequestHandler):
             data = json.loads(self.rfile.read(length))
             if not isinstance(data, dict):
                 raise ValueError("Expected calculation inputs.")
-            if self.path == "/api/offers":
+            if self.path == "/api/offers/rank":
+                result=rank_offer_teams(calculate,data)
+            elif self.path == "/api/offers":
                 result=run_offer_lab(calculate,data)
             elif self.path == "/api/duty-days":
                 player = find_player(data['player_id']) if data.get('player_id') else None
